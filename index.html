@@ -1,2054 +1,2542 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sentence Drill</title>
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sentence Drill</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css" />
+    <script src="https://unpkg.com/compromise@14.10.0/builds/compromise.min.js"></script>
 
-  <script>
-    try {
-      var t = localStorage.getItem("sentence_memorizer_theme_v1");
-      if (t !== "light" && t !== "dark") t = "dark";
-      document.documentElement.setAttribute("data-theme", t || "dark");
-    } catch (e) {
-      document.documentElement.setAttribute("data-theme", "dark");
-    }
-  </script>
+    <script>
+        try {
+            var t = localStorage.getItem("sentence_memorizer_theme_v1");
+            if (t !== "light" && t !== "dark") t = "dark";
+            document.documentElement.setAttribute("data-theme", t || "dark");
+        } catch (e) {
+            document.documentElement.setAttribute("data-theme", "dark");
+        }
+    </script>
 
-  <style>
-    :root{
-      font-family: "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+    <style>
+        .pos-subj {
+            background: #60a5fa22;
+            border: 1px solid #60a5fa55;
+            padding: 1px 4px;
+            border-radius: 8px;
+        }
 
-      --bg: #0b1020;
-      --card: #0f172a;
-      --ink: #e5e7eb;
-      --muted: #94a3b8;
-      --line: #243046;
-      --accent: #60a5fa;
-      --shadow: 0 10px 26px rgba(0,0,0,0.35);
-      --radius: 16px;
+        .pos-verb {
+            background: #22c55e22;
+            border: 1px solid #22c55e55;
+            padding: 1px 4px;
+            border-radius: 8px;
+        }
 
-      --control-bg: color-mix(in srgb, var(--card) 92%, var(--bg));
-      --control-bg-2: color-mix(in srgb, var(--card) 88%, var(--bg));
-      --hover: color-mix(in srgb, var(--card) 85%, var(--bg));
+        .pos-adj {
+            background: #f59e0b22;
+            border: 1px solid #f59e0b55;
+            padding: 1px 4px;
+            border-radius: 8px;
+        }
 
-      --label: color-mix(in srgb, var(--ink) 85%, var(--muted));
-    }
+        .pos-adv {
+            background: #a78bfa22;
+            border: 1px solid #a78bfa55;
+            padding: 1px 4px;
+            border-radius: 8px;
+        }
 
-    :root[data-theme="light"]{
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --ink: #111318;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --accent: #2563eb;
-      --shadow: 0 8px 20px rgba(17,19,24,0.06);
+        :root {
+            font-family: "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+            --bg: #0b1020;
+            --card: #0f172a;
+            --ink: #e5e7eb;
+            --muted: #94a3b8;
+            --line: #243046;
+            --accent: #60a5fa;
+            --shadow: 0 10px 26px rgba(0,0,0,0.35);
+            --radius: 16px;
+            --control-bg: color-mix(in srgb, var(--card) 92%, var(--bg));
+            --control-bg-2: color-mix(in srgb, var(--card) 88%, var(--bg));
+            --hover: color-mix(in srgb, var(--card) 85%, var(--bg));
+            --label: color-mix(in srgb, var(--ink) 85%, var(--muted));
+        }
 
-      --control-bg: color-mix(in srgb, var(--card) 92%, var(--bg));
-      --control-bg-2: color-mix(in srgb, var(--card) 88%, var(--bg));
-      --hover: #f9fafb;
+            :root[data-theme="light"] {
+                --bg: #f6f7fb;
+                --card: #ffffff;
+                --ink: #111318;
+                --muted: #6b7280;
+                --line: #e5e7eb;
+                --accent: #2563eb;
+                --shadow: 0 8px 20px rgba(17,19,24,0.06);
+                --control-bg: color-mix(in srgb, var(--card) 92%, var(--bg));
+                --control-bg-2: color-mix(in srgb, var(--card) 88%, var(--bg));
+                --hover: #f9fafb;
+                --label: #374151;
+            }
 
-      --label: #374151;
-    }
+            :root[data-theme="dark"] {
+                --bg: #0b1020;
+                --card: #0f172a;
+                --ink: #e5e7eb;
+                --muted: #94a3b8;
+                --line: #243046;
+                --accent: #60a5fa;
+                --shadow: 0 10px 26px rgba(0,0,0,0.35);
+                --control-bg: color-mix(in srgb, var(--card) 92%, var(--bg));
+                --control-bg-2: color-mix(in srgb, var(--card) 88%, var(--bg));
+                --hover: color-mix(in srgb, var(--card) 85%, var(--bg));
+                --label: color-mix(in srgb, var(--ink) 90%, var(--muted));
+            }
 
-    :root[data-theme="dark"]{
-      --bg: #0b1020;
-      --card: #0f172a;
-      --ink: #e5e7eb;
-      --muted: #94a3b8;
-      --line: #243046;
-      --accent: #60a5fa;
-      --shadow: 0 10px 26px rgba(0,0,0,0.35);
+        * {
+            box-sizing: border-box;
+        }
 
-      --control-bg: color-mix(in srgb, var(--card) 92%, var(--bg));
-      --control-bg-2: color-mix(in srgb, var(--card) 88%, var(--bg));
-      --hover: color-mix(in srgb, var(--card) 85%, var(--bg));
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+        }
 
-      --label: color-mix(in srgb, var(--ink) 90%, var(--muted));
-    }
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: color-mix(in srgb, var(--card) 92%, transparent);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--line);
+            padding: 0;
+        }
 
-    *{ box-sizing: border-box; }
-    body{
-      margin:0;
-      background: var(--bg);
-      color: var(--ink);
-    }
+            header .row {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                flex-wrap: wrap;
+                max-width: 1120px;
+                margin: 0 auto;
+                padding: 12px 16px;
+            }
 
-    header{
-      position: sticky;
-      top:0;
-      z-index:10;
-      background: color-mix(in srgb, var(--card) 92%, transparent);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--line);
-      padding: 12px 16px;
-    }
-    header .row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    header h1{
-      font-size:16px;
-      margin:0;
-      letter-spacing:-0.2px;
-      font-weight:800;
-      color: var(--ink);
-    }
+            header h1 {
+                font-size: 16px;
+                margin: 0;
+                letter-spacing: -0.2px;
+                font-weight: 800;
+                color: var(--ink);
+            }
 
-    .pill{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      background: var(--control-bg);
-      border: 1px solid var(--line);
-      font-weight:800;
-      color: var(--ink);
-    }
+        .pill {
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--control-bg);
+            border: 1px solid var(--line);
+            font-weight: 800;
+            color: var(--ink);
+        }
 
-    main{
-      max-width:1120px;
-      margin:0 auto;
-      padding:16px;
-    }
+        main {
+            width: min(1120px, 100%);
+            margin: 0 auto;
+            padding: 16px;
+        }
 
-    .tabs{
-      display:flex;
-      gap:8px;
-      margin:10px 0 16px;
-    }
-    .tabbtn{
-      border: 1px solid var(--line);
-      background: var(--control-bg);
-      padding: 10px 12px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 800;
-      color: var(--ink);
-    }
-    .tabbtn.active{
-      border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
-      background: color-mix(in srgb, var(--accent) 18%, var(--control-bg));
-      color: var(--ink);
-    }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0 16px;
+        }
 
-    .grid{ display:grid; grid-template-columns:1fr; gap:12px; }
-    @media (min-width:980px){
-      .grid.two{ grid-template-columns: minmax(360px,420px) 1fr; align-items:start; }
-    }
+        .tabbtn {
+            border: 1px solid var(--line);
+            background: var(--control-bg);
+            padding: 10px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--ink);
+        }
 
-    .card{
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: var(--shadow);
-    }
-    .card h2{
-      font-size:14px;
-      margin:0 0 10px;
-      font-weight:900;
-      color: var(--ink);
-    }
+            .tabbtn.active {
+                border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+                background: color-mix(in srgb, var(--accent) 18%, var(--control-bg));
+                color: var(--ink);
+            }
 
-    .muted{ color: var(--muted); font-size:12px; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
 
-    label{
-      display:block;
-      font-size:12px;
-      color: var(--label);
-      margin:10px 0 6px;
-      font-weight:800;
-    }
+        @media (min-width:980px) {
+            .grid.two {
+                grid-template-columns: minmax(360px,420px) 1fr;
+                align-items: start;
+            }
+        }
 
-    input[type="text"], textarea, select{
-      width:100%;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:14px;
-      outline:none;
-      background: var(--control-bg);
-      color: var(--ink);
-    }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow);
+        }
 
-    input, textarea, select, button{
-      font-family: "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
-    }
+            .card h2 {
+                font-size: 14px;
+                margin: 0 0 10px;
+                font-weight: 900;
+                color: var(--ink);
+            }
 
-    input::placeholder, textarea::placeholder{
-      color: color-mix(in srgb, var(--muted) 85%, transparent);
-    }
+        .muted {
+            color: var(--muted);
+            font-size: 12px;
+        }
 
-    textarea{
-      min-height:88px;
-      resize: vertical;
-    }
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--label);
+            margin: 10px 0 6px;
+            font-weight: 800;
+        }
 
-    input[type="text"]:focus, textarea:focus, select:focus{
-      border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
-    }
+        input[type="text"], textarea, select {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 14px;
+            outline: none;
+            background: var(--control-bg);
+            color: var(--ink);
+        }
 
-    .btnrow{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
+        input, textarea, select, button {
+            font-family: "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+        }
 
-    button{
-      border:1px solid var(--line);
-      background: var(--control-bg);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:800;
-      color: var(--ink);
-    }
-    button.primary{
-      border-color: transparent;
-      background: var(--accent);
-      color: #0b1020;
-    }
-    :root[data-theme="light"] button.primary{ color:#fff; }
+            input::placeholder, textarea::placeholder {
+                color: color-mix(in srgb, var(--muted) 85%, transparent);
+            }
 
-    button.danger{
-      background: var(--control-bg);
-      border-color: color-mix(in srgb, #ef4444 35%, var(--line));
-      color: color-mix(in srgb, #ef4444 85%, var(--ink));
-    }
-    button:disabled{ opacity:.5; cursor:not-allowed; }
+        textarea {
+            min-height: 88px;
+            resize: vertical;
+        }
 
-    .split{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:flex-end;
-    }
-    .split > *{ flex: 1 1 260px; }
+            input[type="text"]:focus, textarea:focus, select:focus {
+                border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+                box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
+            }
 
-    .hr{ height:1px; background: var(--line); margin:12px 0; }
+        .btnrow {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            align-items: center;
+        }
 
-    .tablewrap{
-      overflow:auto;
-      border-radius:12px;
-      border:1px solid var(--line);
-    }
+        button {
+            border: 1px solid var(--line);
+            background: var(--control-bg);
+            padding: 10px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            color: var(--ink);
+        }
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:13px;
-      background: var(--card);
-      table-layout:auto;
-      min-width:960px;
-      color: var(--ink);
-    }
+            button.primary {
+                border-color: transparent;
+                background: var(--accent);
+                color: #0b1020;
+            }
 
-    th, td{
-      border-bottom:1px solid color-mix(in srgb, var(--line) 60%, transparent);
-      padding:10px;
-      vertical-align:top;
-      white-space:normal;
-      color: var(--ink);
-    }
+        :root[data-theme="light"] button.primary {
+            color: #fff;
+        }
 
-    th{
-      position: sticky;
-      top:0;
-      background: var(--control-bg-2);
-      text-align:left;
-      font-size:12px;
-      font-weight:900;
-      color: var(--ink);
-    }
+        button.danger {
+            background: var(--control-bg);
+            border-color: color-mix(in srgb, #ef4444 35%, var(--line));
+            color: color-mix(in srgb, #ef4444 85%, var(--ink));
+        }
 
-    tr:hover td{ background: var(--hover); }
+        button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
 
-    .badge{
-      display:inline-block;
-      font-size:11px;
-      padding:4px 8px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: var(--control-bg);
-      font-weight:900;
-      white-space:nowrap;
-      color: var(--ink);
-    }
+        .split {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
 
-    .catbadge{
-      display:inline-block;
-      font-size:11px;
-      padding:5px 10px;
-      border-radius:999px;
-      border:0;
-      font-weight:900;
-      white-space:nowrap;
-    }
+            .split > * {
+                flex: 1 1 260px;
+            }
 
-    .kpi{ display:flex; gap:10px; flex-wrap:wrap; }
-    .kpi .box{
-      flex: 1 1 160px;
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      padding:10px 12px;
-      background: var(--card);
-      color: var(--ink);
-    }
-    .kpi .num{ font-size:20px; font-weight:900; }
+        .hr {
+            height: 1px;
+            background: var(--line);
+            margin: 12px 0;
+        }
 
-    .mono{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    }
+        .tablewrap {
+            overflow: auto;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+        }
 
-    .diff{
-      padding:10px 12px;
-      border-radius:12px;
-      background: var(--card);
-      border:1px solid var(--line);
-      color: var(--ink);
-    }
-    .diff .good{
-      background:#16a34a20;
-      border:1px solid #22c55e55;
-      padding:1px 4px;
-      border-radius:8px;
-    }
-    .diff .bad{
-      background:#ef444420;
-      border:1px solid #ef444455;
-      padding:1px 4px;
-      border-radius:8px;
-    }
-    .diff .miss{
-      background:#f59e0b20;
-      border:1px solid #f59e0b55;
-      padding:1px 4px;
-      border-radius:8px;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: var(--card);
+            table-layout: auto;
+            min-width: 900px;
+            color: var(--ink);
+        }
 
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:18px;
-      transform:translateX(-50%);
-      background: rgba(17,19,24,0.92);
-      color:#fff;
-      padding:10px 12px;
-      border-radius:999px;
-      font-size:13px;
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .2s ease;
-      font-weight:800;
-    }
-    .toast.show{ opacity:1; }
+        th, td {
+            border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+            padding: 10px;
+            vertical-align: top;
+            white-space: normal;
+            color: var(--ink);
+        }
 
-    .small{ font-size:12px; }
-    .right{ text-align:right; }
+        th {
+            position: sticky;
+            top: 0;
+            background: var(--control-bg-2);
+            text-align: left;
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--ink);
+        }
 
-    th:nth-child(3), td:nth-child(3){ word-break:keep-all; overflow-wrap:break-word; }
-    th:nth-child(4), td:nth-child(4){ word-break:normal; overflow-wrap:anywhere; }
-    th:nth-child(5), td:nth-child(5){ overflow-wrap:anywhere; }
+        tr:hover td {
+            background: var(--hover);
+        }
 
-    @media (max-width:720px){
-      .tablewrap{ border:0; }
-      table, thead, tbody, tr, th, td{
-        display:block;
-        width:100%;
-        min-width:0;
-      }
-      thead{ display:none; }
-      tr{
-        margin-bottom:12px;
-        border:1px solid var(--line);
-        border-radius: var(--radius);
-        background: var(--card);
-        box-shadow: var(--shadow);
-        overflow:hidden;
-      }
-      td{
-        border:0;
-        padding:10px 12px;
-        position:relative;
-      }
-      td::before{
-        content: attr(data-label);
-        display:block;
-        font-size:11px;
-        color: var(--muted);
-        font-weight:900;
-        margin-bottom:6px;
-      }
-    }
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: var(--control-bg);
+            font-weight: 900;
+            white-space: nowrap;
+            color: var(--ink);
+        }
 
-    textarea, input[type="text"]{
-      word-break:keep-all;
-      overflow-wrap:break-word;
-      line-height:1.5;
-    }
+        .catbadge {
+            display: inline-block;
+            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            border: 0;
+            font-weight: 900;
+            white-space: nowrap;
+        }
 
-    .overlay{
-      position:fixed;
-      inset:0;
-      background: rgba(17,19,24,0.55);
-      backdrop-filter: blur(6px);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-      z-index:9999;
-    }
+        .kpi {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
 
-    .overlayCard{
-      width:min(980px, 100%);
-      max-height:92vh;
-      overflow:auto;
-      background: var(--card);
-      border:1px solid var(--line);
-      border-radius:22px;
-      box-shadow: 0 18px 60px rgba(0,0,0,0.22);
-      padding:18px;
-      color: var(--ink);
-    }
+            .kpi .box {
+                flex: 1 1 160px;
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                padding: 10px 12px;
+                background: var(--card);
+                color: var(--ink);
+            }
 
-    .overlayTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
+            .kpi .num {
+                font-size: 20px;
+                font-weight: 900;
+            }
 
-    .overlayTitle{ font-weight:900; font-size:18px; color: var(--ink); }
-    .overlayTitle2{ font-weight:900; font-size:14px; margin-top:6px; color: var(--ink); }
-    .overlaySub{ margin-top:4px; font-size:12px; color: var(--muted); font-weight:800; }
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        }
 
-    .btnExit{
-      border:1px solid var(--line);
-      background: var(--control-bg);
-      padding:10px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:900;
-      color: var(--ink);
-    }
+        .diff {
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            color: var(--ink);
+        }
 
-    .scoreGrid{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap:10px;
-      margin-top:12px;
-    }
-    @media (max-width:720px){
-      .scoreGrid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-    }
+            .diff .good {
+                background: #16a34a20;
+                border: 1px solid #22c55e55;
+                padding: 1px 4px;
+                border-radius: 8px;
+            }
 
-    .scoreBox{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px;
-      background: var(--card);
-      color: var(--ink);
-    }
-    .scoreNum{ font-size:24px; font-weight:900; margin-top:6px; }
+            .diff .bad {
+                background: #ef444420;
+                border: 1px solid #ef444455;
+                padding: 1px 4px;
+                border-radius: 8px;
+            }
 
-    .wrongList{
-      margin-top:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .wrongItem{
-      border:1px solid var(--line);
-      border-radius:16px;
-      background: var(--card);
-      padding:12px;
-      color: var(--ink);
-    }
-    .wrongItem .ko{ font-weight:900; margin-bottom:6px; }
-    .wrongItem .row{ margin-top:8px; }
-    .wrongItem .label{
-      font-size:12px;
-      color: var(--muted);
-      font-weight:900;
-      margin-bottom:4px;
-    }
-    .wrongItem .val{
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-      background: var(--control-bg);
-      white-space: pre-wrap;
-      color: var(--ink);
-    }
-    .wrongItem .val.user{
-      border-color:#ef444455;
-      background:#ef444420;
-    }
-    .wrongItem .val.ans{
-      border-color:#22c55e55;
-      background:#16a34a20;
-    }
-  </style>
+            .diff .miss {
+                background: #f59e0b20;
+                border: 1px solid #f59e0b55;
+                padding: 1px 4px;
+                border-radius: 8px;
+            }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            background: rgba(17,19,24,0.92);
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s ease;
+            font-weight: 800;
+        }
+
+            .toast.show {
+                opacity: 1;
+            }
+
+        .small {
+            font-size: 12px;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        th:nth-child(3), td:nth-child(3) {
+            word-break: keep-all;
+            overflow-wrap: break-word;
+        }
+
+        th:nth-child(4), td:nth-child(4) {
+            word-break: normal;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width:720px) {
+            .tablewrap {
+                border: 0;
+            }
+
+            table, thead, tbody, tr, th, td {
+                display: block;
+                width: 100%;
+                min-width: 0;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 12px;
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                background: var(--card);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            td {
+                border: 0;
+                padding: 10px 12px;
+                position: relative;
+            }
+
+                td::before {
+                    content: attr(data-label);
+                    display: block;
+                    font-size: 11px;
+                    color: var(--muted);
+                    font-weight: 900;
+                    margin-bottom: 6px;
+                }
+        }
+
+        textarea, input[type="text"] {
+            word-break: keep-all;
+            overflow-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(17,19,24,0.55);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 9999;
+        }
+
+        .overlayCard {
+            width: min(980px, 100%);
+            max-height: 92vh;
+            overflow: auto;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+            padding: 18px;
+            color: var(--ink);
+        }
+
+        .overlayTop {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .overlayTitle {
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--ink);
+        }
+
+        .overlayTitle2 {
+            font-weight: 900;
+            font-size: 14px;
+            margin-top: 6px;
+            color: var(--ink);
+        }
+
+        .overlaySub {
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 800;
+        }
+
+        .btnExit {
+            border: 1px solid var(--line);
+            background: var(--control-bg);
+            padding: 10px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 900;
+            color: var(--ink);
+        }
+
+        .scoreGrid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0,1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        @media (max-width:720px) {
+            .scoreGrid {
+                grid-template-columns: repeat(2, minmax(0,1fr));
+            }
+        }
+
+        .scoreBox {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 12px;
+            background: var(--card);
+            color: var(--ink);
+        }
+
+        .scoreNum {
+            font-size: 24px;
+            font-weight: 900;
+            margin-top: 6px;
+        }
+
+        .wrongList {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .wrongItem {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: var(--card);
+            padding: 12px;
+            color: var(--ink);
+        }
+
+            .wrongItem .ko {
+                font-weight: 900;
+                margin-bottom: 6px;
+            }
+
+            .wrongItem .row {
+                margin-top: 8px;
+            }
+
+            .wrongItem .label {
+                font-size: 12px;
+                color: var(--muted);
+                font-weight: 900;
+                margin-bottom: 4px;
+            }
+
+            .wrongItem .val {
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 10px 12px;
+                background: var(--control-bg);
+                white-space: pre-wrap;
+                color: var(--ink);
+            }
+
+                .wrongItem .val.user {
+                    border-color: #ef444455;
+                    background: #ef444420;
+                }
+
+                .wrongItem .val.ans {
+                    border-color: #22c55e55;
+                    background: #16a34a20;
+                }
+    </style>
 </head>
 
 <body>
-  <header>
-    <div class="row">
-      <h1>Sentence Drill</h1>
-      <span id="headerCount" class="pill">문장 0개</span>
-      <span id="headerStreak" class="pill">연속 정답 0</span>
+    <header>
+        <div class="row">
+            <h1>Sentence Drill</h1>
+            <span id="headerCount" class="pill">문장 0개</span>
+            <span id="headerStreak" class="pill">연속 정답 0</span>
 
-      <select id="themeSelect" class="pill" style="padding:6px 10px;">
-        <option value="dark" selected>다크</option>
-        <option value="light">라이트</option>
-      </select>
-    </div>
-  </header>
-
-  <main>
-    <div class="tabs">
-      <button class="tabbtn active" data-tab="manage">문장 관리</button>
-      <button class="tabbtn" data-tab="quiz">퀴즈</button>
-      <button class="tabbtn" data-tab="stats">통계/오답노트</button>
-    </div>
-
-    <section id="tab-manage" class="grid two">
-      <div class="card">
-        <h2>문장 추가 / 수정</h2>
-
-        <label>카테고리</label>
-        <select id="catSelect"></select>
-
-        <label>한국어 뜻(문제)</label>
-        <textarea id="koInput" placeholder="예) 나는 오늘 너무 피곤하다"></textarea>
-
-        <label>영어 문장(정답)</label>
-        <textarea id="enInput" placeholder="예) I am very tired today."
-          spellcheck="true" lang="en" autocomplete="off" autocapitalize="off"></textarea>
-
-        <label>태그(선택)</label>
-        <input id="tagInput" type="text" placeholder="예) daily, travel, grammar" />
-        <div class="muted">쉼표로 여러 개 입력 가능</div>
-
-        <div class="btnrow">
-          <button class="primary" id="saveBtn">저장</button>
-          <button id="resetFormBtn">폼 초기화</button>
-          <button class="danger" id="deleteBtn" disabled>선택 항목 삭제</button>
-        </div>
-
-        <div class="hr"></div>
-
-        <h2>카테고리 관리</h2>
-
-        <div class="split">
-          <div>
-            <label>선택(수정/삭제용)</label>
-            <select id="catManageSelect"></select>
-          </div>
-          <div>
-            <label>이름</label>
-            <input id="catNameInput" type="text" placeholder="예) 여행, 일상, 업무" />
-          </div>
-          <div>
-            <label>색상(HEX)</label>
-            <input id="catColorInput" type="text" value="#2563eb" placeholder="#00BCD4" />
-            <div class="muted small">예: #00BCD4 또는 00BCD4</div>
-          </div>
-          <div>
-            <label>미리보기</label>
-            <div id="catColorPreview"
-              style="height:42px; border-radius:12px; border:1px solid var(--line); background:#2563eb;"></div>
-          </div>
-        </div>
-
-        <div class="btnrow">
-          <button class="primary" id="catAddBtn">카테고리 추가</button>
-          <button id="catUpdateBtn">선택 카테고리 수정</button>
-          <button class="danger" id="catDeleteBtn">선택 카테고리 삭제</button>
-        </div>
-
-        <div class="muted" style="margin-top:8px;">
-          삭제 시 해당 카테고리를 쓰던 문장들은 “(없음)”으로 전환됩니다.
-        </div>
-
-        <div class="hr"></div>
-
-        <h2>데이터</h2>
-        <div class="btnrow">
-          <button id="exportBtn">데이터 다운로드</button>
-          <button id="importBtn">데이터 불러오기</button>
-          <button class="danger" id="wipeBtn">전체 초기화</button>
-        </div>
-        <input id="importFile" type="file" accept="application/json" style="display:none" />
-        <div class="muted">
-          다운로드한 데이터를 다시 불러오면 다른 PC에서도 이어서 사용할 수 있습니다.
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>문장 목록</h2>
-        <div class="split">
-          <div>
-            <label>검색</label>
-            <input id="searchInput" type="text" placeholder="한국어/영어/태그 검색" />
-          </div>
-          <div>
-            <label>카테고리 필터</label>
-            <select id="catFilterSelect"></select>
-          </div>
-          <div>
-            <label>정렬</label>
-            <select id="sortSelect">
-              <option value="updated_desc" selected>최근 수정순</option>
-              <option value="created_desc">최근 추가순</option>
-              <option value="wrong_desc">오답 많은 순</option>
+            <select id="themeSelect" class="pill" style="padding:6px 10px;">
+                <option value="dark" selected>다크</option>
+                <option value="light">라이트</option>
             </select>
-          </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="tabs">
+            <button class="tabbtn active" data-tab="manage">문장 관리</button>
+            <button class="tabbtn" data-tab="quiz">퀴즈</button>
+            <button class="tabbtn" data-tab="stats">통계/오답노트</button>
         </div>
 
-        <div class="tablewrap" style="margin-top:12px; max-height:520px;">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:52px;">선택</th>
-                <th style="width:160px;">카테고리</th>
-                <th>한국어 뜻</th>
-                <th>영어 문장</th>
-                <th style="width:140px;">태그</th>
-                <th style="width:90px;">오답</th>
-              </tr>
-            </thead>
-            <tbody id="listTbody"></tbody>
-          </table>
-        </div>
+        <section id="tab-manage" class="grid two">
+            <div class="card">
+                <h2>문장 추가 / 수정</h2>
 
-        <div class="muted" style="margin-top:10px;">
-          행을 클릭하면 폼에 로드됩니다. (삭제는 선택 후 버튼)
-        </div>
-      </div>
-    </section>
+                <label>카테고리</label>
+                <select id="catSelect"></select>
 
-    <section id="tab-quiz" class="grid two" style="display:none;">
-      <div class="card">
-        <h2>퀴즈 설정</h2>
+                <label>한국어 뜻(문제)</label>
+                <textarea id="koInput" placeholder="예) 나는 오늘 너무 피곤하다"></textarea>
 
-        <div class="split">
-          <div>
-            <label>출제 모드</label>
-            <select id="modeSelect">
-              <option value="random" selected>랜덤</option>
-              <option value="sequential">순서대로</option>
-              <option value="wrongbook">오답노트(오답 있는 문장만)</option>
-            </select>
-          </div>
-          <div>
-            <label>카테고리 필터</label>
-            <select id="quizCatFilter"></select>
-          </div>
-        </div>
+                <label>영어 문장(정답)</label>
+                <textarea id="enInput" placeholder="예) I am very tired today."
+                          spellcheck="true" lang="en" autocomplete="off" autocapitalize="off"></textarea>
 
-        <label>태그 필터(선택)</label>
-        <input id="tagFilter" type="text" placeholder="예) travel (하나만 입력)" />
+                <div class="btnrow">
+                    <button class="primary" id="saveBtn">저장</button>
+                    <button id="resetFormBtn">폼 초기화</button>
+                    <button class="danger" id="deleteBtn" disabled>현재 선택 문장 삭제</button>
+                </div>
 
-        <div class="split">
-          <div>
-            <label>문제 수(현재 필터 기준)</label>
-            <div class="kpi">
-              <div class="box">
-                <div class="muted">가능 문항</div>
-                <div class="num" id="poolCount">0</div>
-              </div>
-              <div class="box">
-                <div class="muted">진행</div>
-                <div class="num" id="quizProgress">0 / 0</div>
-              </div>
+                <div class="hr"></div>
+
+                <h2>카테고리 관리</h2>
+
+                <label>카테고리 목록</label>
+                <div id="catListBox" style="border:1px solid var(--line); border-radius:12px; padding:10px; background:var(--control-bg); max-height:220px; overflow:auto;"></div>
+
+                <div class="btnrow" style="margin-top:10px;">
+                    <button class="danger" id="catBulkDeleteBtn2" disabled>선택 카테고리 삭제</button>
+                </div>
+
+                <div class="hr"></div>
+
+                <h2>카테고리 수정/추가</h2>
+
+                <label>수정할 카테고리</label>
+                <select id="catEditSelect"></select>
+
+                <label>카테고리 이름</label>
+                <input id="catEditNameInput" type="text" placeholder="예) PART 3" />
+
+                <label>색상</label>
+                <div id="pastelPalette" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+                <div class="muted small" style="margin-top:6px;">색상 선택 후 아래 버튼으로 수정/추가</div>
+
+                <div class="btnrow" style="margin-top:10px;">
+                    <button class="primary" id="catUpdateBtn">수정 적용</button>
+                </div>
+
+                <div class="hr"></div>
+
+                <label>새 카테고리 이름</label>
+                <input id="catNameInput2" type="text" placeholder="예) PART 1" />
+
+                <div class="btnrow" style="margin-top:10px;">
+                    <button class="primary" id="catAddBtn2">카테고리 추가</button>
+                </div>
+
+                <div class="muted" style="margin-top:8px;">
+                    삭제 시 해당 카테고리를 쓰던 문장들은 없음으로 전환됩니다.
+                </div>
+
+                <div class="hr"></div>
+
+                <h2>데이터</h2>
+                <div class="btnrow">
+                    <button id="exportBtn">데이터 다운로드</button>
+                    <button id="importBtn">데이터 불러오기(덮어쓰기)</button>
+                    <button class="danger" id="wipeBtn">전체 초기화</button>
+                </div>
+                <input id="importFile" type="file" accept="application/json" style="display:none" />
+                <div class="muted">
+                    다운로드한 데이터를 불러오면 다른 기기에서도 이어서 사용할 수 있습니다.
+                    (불러오기는 현재 데이터를 모두 지우고 덮어씁니다)
+                </div>
             </div>
-          </div>
+
+            <div class="card">
+                <h2>문장 목록</h2>
+
+                <div class="split">
+                    <div>
+                        <label>검색</label>
+                        <input id="searchInput" type="text" placeholder="한국어/영어 검색" />
+                    </div>
+                    <div>
+                        <label>카테고리 필터</label>
+                        <select id="catFilterSelect"></select>
+                    </div>
+                    <div>
+                        <label>정렬</label>
+                        <select id="sortSelect">
+                            <option value="updated_desc" selected>최근 수정순</option>
+                            <option value="created_desc">최근 추가순</option>
+                            <option value="wrong_desc">오답 많은 순</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="btnrow" style="margin-top:10px;">
+                    <span class="muted" id="bulkItemCount">선택 0개</span>
+                    <button class="danger" id="bulkDeleteItemsBtn" disabled>선택 문장 삭제</button>
+
+                    <select id="bulkChangeCatSelect" style="max-width:260px;">
+                        <option value="">카테고리 변경...</option>
+                    </select>
+                    <button id="bulkApplyCatBtn" disabled>적용</button>
+
+                    <button id="bulkClearSelectionBtn">선택 해제</button>
+                </div>
+
+                <div class="tablewrap" style="margin-top:12px; max-height:520px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:72px;">
+                                    <input type="checkbox" id="selectAllItems" />
+                                </th>
+                                <th style="width:160px;">카테고리</th>
+                                <th>한국어 뜻</th>
+                                <th>영어 문장</th>
+                                <th style="width:90px;">오답</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listTbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="muted" style="margin-top:10px;">
+                    행을 클릭하면 폼에 로드됩니다. (다중 작업은 체크박스로 선택 후 버튼)
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-quiz" class="grid two" style="display:none;">
+            <div class="card">
+                <h2>퀴즈 설정</h2>
+
+                <div class="split">
+                    <div>
+                        <label>출제 모드</label>
+                        <select id="modeSelect">
+                            <option value="random" selected>랜덤</option>
+                            <option value="sequential">순서대로</option>
+                            <option value="wrongbook">오답노트(오답 있는 문장만)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>카테고리 필터</label>
+                        <select id="quizCatFilter"></select>
+                    </div>
+                </div>
+
+                <div class="split">
+                    <div>
+                        <label>문제 수(현재 필터 기준)</label>
+                        <div class="kpi">
+                            <div class="box">
+                                <div class="muted">가능 문항</div>
+                                <div class="num" id="poolCount">0</div>
+                            </div>
+                            <div class="box">
+                                <div class="muted">진행</div>
+                                <div class="num" id="quizProgress">0 / 0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btnrow">
+                    <button class="primary" id="startQuizBtn">퀴즈 시작/다음</button>
+                    <button id="revealBtn" disabled>정답 보기</button>
+                    <button id="shuffleBtn">재시작(섞기)</button>
+                </div>
+
+                <div class="hr"></div>
+                <div class="muted">
+                    입력 후 <span class="mono">Ctrl+Enter</span>로 제출 가능
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>문제</h2>
+                <div class="muted">한국어 뜻</div>
+                <div id="koPrompt" style="font-size:18px; font-weight:900; margin-top:6px;">-</div>
+                <div class="hr"></div>
+
+                <label>영어 문장 입력</label>
+                <textarea id="answerInput" placeholder="여기에 영어 문장을 작성"
+                          spellcheck="true" lang="en" autocomplete="off" autocapitalize="off"></textarea>
+
+                <div class="btnrow">
+                    <button class="primary" id="submitBtn" disabled>제출/채점</button>
+                    <button id="skipBtn" disabled>건너뛰기</button>
+                    <button id="copyAnswerBtn" disabled>정답 복사</button>
+                </div>
+
+                <div class="hr"></div>
+
+                <div id="resultArea" style="display:none;">
+                    <div class="btnrow" style="align-items:center;">
+                        <span id="resultBadge" class="badge">-</span>
+                        <span id="scoreText" class="muted"></span>
+                    </div>
+
+                    <label>내 답</label>
+                    <div id="myAnswerArea" class="mono diff" style="white-space:pre-wrap;"></div>
+
+                    <label style="margin-top:10px;">정답</label>
+                    <div id="answerArea" class="mono diff" style="white-space:pre-wrap;"></div>
+
+                    <div class="muted small" id="itemMeta" style="margin-top:10px;"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-stats" class="grid two" style="display:none;">
+            <div class="card">
+                <h2>통계</h2>
+                <div class="kpi">
+                    <div class="box">
+                        <div class="muted">총 문장</div>
+                        <div class="num" id="statTotal">0</div>
+                    </div>
+                    <div class="box">
+                        <div class="muted">총 시도</div>
+                        <div class="num" id="statAttempts">0</div>
+                    </div>
+                    <div class="box">
+                        <div class="muted">정답</div>
+                        <div class="num" id="statCorrect">0</div>
+                    </div>
+                    <div class="box">
+                        <div class="muted">정답률</div>
+                        <div class="num" id="statAcc">0%</div>
+                    </div>
+                </div>
+
+                <div class="hr"></div>
+
+                <div class="kpi">
+                    <div class="box">
+                        <div class="muted">연속 정답</div>
+                        <div class="num" id="statStreak">0</div>
+                    </div>
+                    <div class="box">
+                        <div class="muted">최고 연속 정답</div>
+                        <div class="num" id="statBestStreak">0</div>
+                    </div>
+                </div>
+
+                <div class="btnrow" style="margin-top:12px;">
+                    <button id="resetStatsBtn" class="danger">통계 초기화</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>오답노트(오답 있는 문장)</h2>
+                <div class="muted">오답이 누적된 항목부터 보입니다. 클릭하면 관리 폼으로 불러옵니다.</div>
+
+                <div class="tablewrap" style="margin-top:12px; max-height:560px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:90px;">오답</th>
+                                <th style="width:160px;">카테고리</th>
+                                <th>한국어 뜻</th>
+                                <th>영어 문장</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wrongTbody"></tbody>
+                    </table>
+                </div>
+
+                <div class="btnrow">
+                    <button id="clearWrongBtn" class="danger">오답 카운트 초기화(전체)</button>
+                </div>
+            </div>
+        </section>
+
+        <div id="quizResultOverlay" class="overlay" style="display:none;">
+            <div class="overlayCard">
+                <div class="overlayTop">
+                    <div>
+                        <div class="overlayTitle">채점 결과</div>
+                        <div class="overlaySub" id="overlaySub">-</div>
+                    </div>
+                    <button id="exitResultBtn" class="btnExit">나가기</button>
+                </div>
+
+                <div class="scoreGrid">
+                    <div class="scoreBox">
+                        <div class="muted">점수(100점 만점)</div>
+                        <div class="scoreNum" id="finalScore">0</div>
+                    </div>
+                    <div class="scoreBox">
+                        <div class="muted">정답률</div>
+                        <div class="scoreNum" id="finalPercent">0%</div>
+                    </div>
+                    <div class="scoreBox">
+                        <div class="muted">맞은 개수</div>
+                        <div class="scoreNum" id="finalCorrect">0</div>
+                    </div>
+                    <div class="scoreBox">
+                        <div class="muted">총 문제</div>
+                        <div class="scoreNum" id="finalTotal">0</div>
+                    </div>
+                </div>
+
+                <div class="hr"></div>
+
+                <div class="overlayTitle2">틀린 문장</div>
+                <div class="muted" style="margin-top:6px;">클릭 복사 같은 기능 원하면 그때 추가 가능</div>
+
+                <div id="wrongList" class="wrongList"></div>
+            </div>
         </div>
-
-        <div class="btnrow">
-          <button class="primary" id="startQuizBtn">퀴즈 시작/다음</button>
-          <button id="revealBtn" disabled>정답 보기</button>
-          <button id="shuffleBtn">재시작(섞기)</button>
-        </div>
-
-        <div class="hr"></div>
-        <div class="muted">
-          입력 후 <span class="mono">Ctrl+Enter</span>로 제출 가능
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>문제</h2>
-        <div class="muted">한국어 뜻</div>
-        <div id="koPrompt" style="font-size:18px; font-weight:900; margin-top:6px;">-</div>
-        <div class="hr"></div>
-
-        <label>영어 문장 입력</label>
-        <textarea id="answerInput" placeholder="여기에 영어 문장을 작성"
-          spellcheck="true" lang="en" autocomplete="off" autocapitalize="off"></textarea>
-
-        <div class="btnrow">
-          <button class="primary" id="submitBtn" disabled>제출/채점</button>
-          <button id="skipBtn" disabled>건너뛰기</button>
-          <button id="copyAnswerBtn" disabled>정답 복사</button>
-        </div>
-
-        <div class="hr"></div>
-
-        <div id="resultArea" style="display:none;">
-          <div class="btnrow" style="align-items:center;">
-            <span id="resultBadge" class="badge">-</span>
-            <span id="scoreText" class="muted"></span>
-          </div>
-
-          <label>내 답</label>
-          <div id="myAnswerArea" class="mono diff" style="white-space:pre-wrap;"></div>
-
-          <label style="margin-top:10px;">정답</label>
-          <div id="answerArea" class="mono diff" style="white-space:pre-wrap;"></div>
-
-          <label style="margin-top:10px;">비교</label>
-          <div id="diffArea" class="diff" style="white-space:pre-wrap;"></div>
-
-          <div class="muted small" id="itemMeta" style="margin-top:10px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="tab-stats" class="grid two" style="display:none;">
-      <div class="card">
-        <h2>통계</h2>
-        <div class="kpi">
-          <div class="box">
-            <div class="muted">총 문장</div>
-            <div class="num" id="statTotal">0</div>
-          </div>
-          <div class="box">
-            <div class="muted">총 시도</div>
-            <div class="num" id="statAttempts">0</div>
-          </div>
-          <div class="box">
-            <div class="muted">정답</div>
-            <div class="num" id="statCorrect">0</div>
-          </div>
-          <div class="box">
-            <div class="muted">정답률</div>
-            <div class="num" id="statAcc">0%</div>
-          </div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="kpi">
-          <div class="box">
-            <div class="muted">연속 정답</div>
-            <div class="num" id="statStreak">0</div>
-          </div>
-          <div class="box">
-            <div class="muted">최고 연속 정답</div>
-            <div class="num" id="statBestStreak">0</div>
-          </div>
-        </div>
-
-        <div class="btnrow" style="margin-top:12px;">
-          <button id="resetStatsBtn" class="danger">통계 초기화</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>오답노트(오답 있는 문장)</h2>
-        <div class="muted">오답이 누적된 항목부터 보입니다. 클릭하면 관리 폼으로 불러옵니다.</div>
-
-        <div class="tablewrap" style="margin-top:12px; max-height:560px;">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:90px;">오답</th>
-                <th style="width:160px;">카테고리</th>
-                <th>한국어 뜻</th>
-                <th>영어 문장</th>
-                <th style="width:140px;">태그</th>
-              </tr>
-            </thead>
-            <tbody id="wrongTbody"></tbody>
-          </table>
-        </div>
-
-        <div class="btnrow">
-          <button id="clearWrongBtn" class="danger">오답 카운트 초기화(전체)</button>
-        </div>
-      </div>
-    </section>
-
-    <div id="quizResultOverlay" class="overlay" style="display:none;">
-      <div class="overlayCard">
-        <div class="overlayTop">
-          <div>
-            <div class="overlayTitle">채점 결과</div>
-            <div class="overlaySub" id="overlaySub">-</div>
-          </div>
-          <button id="exitResultBtn" class="btnExit">나가기</button>
-        </div>
-
-        <div class="scoreGrid">
-          <div class="scoreBox">
-            <div class="muted">점수(100점 만점)</div>
-            <div class="scoreNum" id="finalScore">0</div>
-          </div>
-          <div class="scoreBox">
-            <div class="muted">정답률</div>
-            <div class="scoreNum" id="finalPercent">0%</div>
-          </div>
-          <div class="scoreBox">
-            <div class="muted">맞은 개수</div>
-            <div class="scoreNum" id="finalCorrect">0</div>
-          </div>
-          <div class="scoreBox">
-            <div class="muted">총 문제</div>
-            <div class="scoreNum" id="finalTotal">0</div>
-          </div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="overlayTitle2">틀린 문장</div>
-        <div class="muted" style="margin-top:6px;">클릭 복사 같은 기능 원하면 그때 추가 가능</div>
-
-        <div id="wrongList" class="wrongList"></div>
-      </div>
-    </div>
-  </main>
-
-  <div id="toast" class="toast">-</div>
-
-  <script type="text/javascript">
-    (function () {
-      "use strict";
-
-      function uuid() {
-        try {
-          if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
-          if (window.crypto && window.crypto.getRandomValues) {
-            var buf = new Uint8Array(16);
-            window.crypto.getRandomValues(buf);
-            buf[6] = (buf[6] & 0x0f) | 0x40;
-            buf[8] = (buf[8] & 0x3f) | 0x80;
-            var hex = [];
-            for (var i = 0; i < buf.length; i++) hex.push((buf[i] + 0x100).toString(16).slice(1));
-            var h = hex.join("");
-            return h.slice(0, 8) + "-" + h.slice(8, 12) + "-" + h.slice(12, 16) + "-" + h.slice(16, 20) + "-" + h.slice(20);
-          }
-        } catch (e) { }
-        return "id-" + (new Date().getTime()) + "-" + Math.floor(Math.random() * 1e9);
-      }
-
-      var LS_KEY_ITEMS = "sentence_memorizer_items_v2_compat";
-      var LS_KEY_STATS = "sentence_memorizer_stats_v2_compat";
-      var LS_KEY_CATS = "sentence_memorizer_categories_v2_compat";
-      var LS_KEY_THEME = "sentence_memorizer_theme_v1";
-
-      function trim(s) { return String(s || "").replace(/^\s+|\s+$/g, ""); }
-
-      function clampInt(v, min, max) {
-        var n = Number(v);
-        if (!isFinite(n)) return min;
-        n = Math.floor(n);
-        if (n < min) n = min;
-        if (n > max) n = max;
-        return n;
-      }
-
-      function normalizeTags(tags) {
-        var out = [];
-        if (!tags) return out;
-        if (Object.prototype.toString.call(tags) === "[object Array]") {
-          for (var i = 0; i < tags.length; i++) {
-            var t = trim(tags[i]);
-            if (t) out.push(t);
-          }
-          return out;
-        }
-        var s = String(tags);
-        var parts = s.split(",");
-        for (var j = 0; j < parts.length; j++) {
-          var tt = trim(parts[j]);
-          if (tt) out.push(tt);
-        }
-        return out;
-      }
-
-      function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, function (m) {
-          return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[m];
-        });
-      }
-
-      function fmtDate(ts) {
-        var d = new Date(ts);
-        var y = d.getFullYear();
-        var m = String(d.getMonth() + 1); if (m.length < 2) m = "0" + m;
-        var day = String(d.getDate()); if (day.length < 2) day = "0" + day;
-        var hh = String(d.getHours()); if (hh.length < 2) hh = "0" + hh;
-        var mm = String(d.getMinutes()); if (mm.length < 2) mm = "0" + mm;
-        return y + "-" + m + "-" + day + " " + hh + ":" + mm;
-      }
-
-      function normalizeHexColor(s) {
-        var x = trim(s).toUpperCase();
-        if (!x) return null;
-        if (x.charAt(0) !== "#") x = "#" + x;
-
-        var m3 = x.match(/^#([0-9A-F]{3})$/);
-        if (m3) {
-          var r = m3[1].charAt(0), g = m3[1].charAt(1), b = m3[1].charAt(2);
-          return "#" + r + r + g + g + b + b;
-        }
-        if (/^#[0-9A-F]{6}$/.test(x)) return x;
-        return null;
-      }
-
-      function setCatPreviewColor(hex) {
-        var p = $("catColorPreview");
-        if (!p) return;
-        p.style.background = hex || "#ffffff";
-      }
-
-      function textColorForBg(hex) {
-        try {
-          var h = String(hex || "").replace("#", "");
-          if (h.length !== 6) return "#111";
-          var r = parseInt(h.slice(0, 2), 16);
-          var g = parseInt(h.slice(2, 4), 16);
-          var b = parseInt(h.slice(4, 6), 16);
-          var y = (r * 299 + g * 587 + b * 114) / 1000;
-          return (y >= 160) ? "#111" : "#fff";
-        } catch (e) {
-          return "#111";
-        }
-      }
-
-      function $(id) { return document.getElementById(id); }
-
-      function toast(msg) {
-        var t = $("toast");
-        t.textContent = msg;
-        t.className = "toast show";
-        setTimeout(function () { t.className = "toast"; }, 1200);
-      }
-
-      function loadItems() {
-        try {
-          var raw = localStorage.getItem(LS_KEY_ITEMS);
-          if (!raw) return [];
-          var arr = JSON.parse(raw);
-          if (!arr || !arr.length) return [];
-          var out = [];
-          for (var i = 0; i < arr.length; i++) {
-            var x = arr[i] || {};
-            var now = Date.now();
-            out.push({
-              id: String((x.id != null) ? x.id : uuid()),
-              catId: String((x.catId != null) ? x.catId : "none"),
-              ko: String((x.ko != null) ? x.ko : ""),
-              en: String((x.en != null) ? x.en : ""),
-              tags: normalizeTags(x.tags),
-              createdAt: Number((x.createdAt != null) ? x.createdAt : now),
-              updatedAt: Number((x.updatedAt != null) ? x.updatedAt : now),
-              wrong: clampInt((x.wrong != null) ? x.wrong : 0, 0, 1000000000),
-              correct: clampInt((x.correct != null) ? x.correct : 0, 0, 1000000000),
-              attempts: clampInt((x.attempts != null) ? x.attempts : 0, 0, 1000000000)
-            });
-          }
-          return out;
-        } catch (e) { return []; }
-      }
-
-      function saveItems(items) { localStorage.setItem(LS_KEY_ITEMS, JSON.stringify(items)); }
-
-      function loadStats() {
-        try {
-          var raw = localStorage.getItem(LS_KEY_STATS);
-          if (!raw) return { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
-          var s = JSON.parse(raw) || {};
-          return {
-            attempts: clampInt((s.attempts != null) ? s.attempts : 0, 0, 1000000000),
-            correct: clampInt((s.correct != null) ? s.correct : 0, 0, 1000000000),
-            streak: clampInt((s.streak != null) ? s.streak : 0, 0, 1000000000),
-            bestStreak: clampInt((s.bestStreak != null) ? s.bestStreak : 0, 0, 1000000000)
-          };
-        } catch (e) {
-          return { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
-        }
-      }
-
-      function saveStats(stats) { localStorage.setItem(LS_KEY_STATS, JSON.stringify(stats)); }
-
-      function defaultCategories() {
-        return [
-          { id: "none", name: "(없음)", color: "#9ca3af" },
-          { id: "cat-" + uuid(), name: "일상", color: "#2563eb" },
-          { id: "cat-" + uuid(), name: "여행", color: "#7c3aed" }
-        ];
-      }
-
-      function loadCategories() {
-        try {
-          var raw = localStorage.getItem(LS_KEY_CATS);
-          if (!raw) return defaultCategories();
-          var arr = JSON.parse(raw);
-          if (!arr || !arr.length) return defaultCategories();
-
-          var hasNone = false;
-          for (var i = 0; i < arr.length; i++) if (arr[i] && String(arr[i].id) === "none") { hasNone = true; break; }
-          if (!hasNone) arr.unshift({ id: "none", name: "(없음)", color: "#9ca3af" });
-
-          var out = [];
-          for (var j = 0; j < arr.length; j++) {
-            var c = arr[j] || {};
-            var id = String((c.id != null) ? c.id : ("cat-" + uuid()));
-            var name = trim((c.name != null) ? c.name : "카테고리");
-            if (!name) name = "카테고리";
-            var color = normalizeHexColor(c.color) || "#2563eb";
-            out.push({ id: id, name: name, color: color });
-          }
-
-          var finalArr = [];
-          var noneObj = null;
-          for (var k = 0; k < out.length; k++) if (out[k].id === "none") { noneObj = out[k]; break; }
-          if (!noneObj) noneObj = { id: "none", name: "(없음)", color: "#9ca3af" };
-          finalArr.push(noneObj);
-          for (var t = 0; t < out.length; t++) if (out[t].id !== "none") finalArr.push(out[t]);
-
-          return finalArr;
-        } catch (e) {
-          return defaultCategories();
-        }
-      }
-
-      function saveCategories(cats) { localStorage.setItem(LS_KEY_CATS, JSON.stringify(cats)); }
-
-      function findCatById(id) {
-        for (var i = 0; i < categories.length; i++) if (categories[i].id === id) return categories[i];
-        return null;
-      }
-
-      function getCatById(id) {
-        var c = findCatById(id);
-        if (c) return c;
-        return categories[0] || { id: "none", name: "(없음)", color: "#9ca3af" };
-      }
-
-      function catBadgeHtml(catId) {
-        var c = getCatById(catId);
-        var fg = textColorForBg(c.color);
-        return "<span class='catbadge' style='background:" + escapeHtml(c.color) + "; color:" + fg + ";'>" + escapeHtml(c.name) + "</span>";
-      }
-
-      function updateCatSelectStyle() {
-        var sel = $("catSelect");
-        if (!sel) return;
-
-        var catId = sel.value || "none";
-        var c = getCatById(catId);
-        var fg = textColorForBg(c.color);
-
-        sel.style.background = c.color;
-        sel.style.color = fg;
-
-        sel.style.borderColor = "var(--line)";
-      }
-
-      function highlightPOS(sentence) {
-        sentence = String(sentence || "");
-        if (!sentence) return "";
-        if (!window.nlp) return escapeHtml(sentence);
-
-        try {
-          var doc = window.nlp(sentence);
-          var terms = doc.terms().json({ offset: true });
-
-          var firstVerbIndex = -1;
-          for (var i = 0; i < terms.length; i++) {
-            if (terms[i].tags && terms[i].tags.Verb) { firstVerbIndex = i; break; }
-          }
-          var subjectIndex = -1;
-          if (firstVerbIndex !== -1) {
-            for (var j = 0; j < firstVerbIndex; j++) {
-              var tg = terms[j].tags || {};
-              if (tg.Noun || tg.Pronoun) { subjectIndex = j; break; }
-            }
-          }
-
-          var out = "";
-          var cursor = 0;
-
-          for (var k = 0; k < terms.length; k++) {
-            var t = terms[k];
-            var off = t.offset || {};
-            var start = (off.start != null) ? off.start : cursor;
-            var end = (off.end != null) ? off.end : (start + String(t.text || "").length);
-
-            out += escapeHtml(sentence.slice(cursor, start));
-
-            var cls = "";
-            if (k === subjectIndex) cls = "pos-subj";
-            else if (t.tags && t.tags.Verb) cls = "pos-verb";
-            else if (t.tags && t.tags.Adjective) cls = "pos-adj";
-            else if (t.tags && t.tags.Adverb) cls = "pos-adv";
-
-            var seg = sentence.slice(start, end);
-            if (cls) out += "<span class='" + cls + "'>" + escapeHtml(seg) + "</span>";
-            else out += escapeHtml(seg);
-
-            cursor = end;
-          }
-
-          out += escapeHtml(sentence.slice(cursor));
-          return out;
-        } catch (e) {
-          return escapeHtml(sentence);
-        }
-      }
-
-      var items = loadItems();
-      var categories = loadCategories();
-      var selectedId = null;
-
-      var quizPool = [];
-      var quizIndex = 0;
-      var currentItem = null;
-      var quizMode = "random";
-
-      function setTab(tab) {
-        var btns = document.querySelectorAll(".tabbtn");
-        for (var i = 0; i < btns.length; i++) {
-          btns[i].className = "tabbtn" + ((btns[i].getAttribute("data-tab") === tab) ? " active" : "");
-        }
-        $("tab-manage").style.display = (tab === "manage") ? "" : "none";
-        $("tab-quiz").style.display = (tab === "quiz") ? "" : "none";
-        $("tab-stats").style.display = (tab === "stats") ? "" : "none";
-        if (tab === "stats") renderStats();
-        if (tab === "quiz") refreshQuizPool();
-      }
-
-      var tabButtons = document.querySelectorAll(".tabbtn");
-      for (var tb = 0; tb < tabButtons.length; tb++) {
-        tabButtons[tb].addEventListener("click", (function (btn) {
-          return function () { setTab(btn.getAttribute("data-tab")); };
-        })(tabButtons[tb]));
-      }
-
-      function renderCategorySelects() {
-        fillCatSelect($("catSelect"));
-        fillCatSelect($("catManageSelect"));
-        fillCatFilterSelect($("catFilterSelect"));
-        fillCatFilterSelect($("quizCatFilter"));
-      }
-
-      $("catSelect").addEventListener("change", updateCatSelectStyle);
-
-      function fillCatSelect(sel) {
-        sel.innerHTML = "";
-        for (var i = 0; i < categories.length; i++) {
-          var c = categories[i];
-          var opt = document.createElement("option");
-          opt.value = c.id;
-          opt.textContent = c.name;
-          sel.appendChild(opt);
-        }
-      }
-
-      function fillCatFilterSelect(sel) {
-        sel.innerHTML = "";
-        var optAll = document.createElement("option");
-        optAll.value = "all";
-        optAll.textContent = "전체";
-        sel.appendChild(optAll);
-
-        for (var i = 0; i < categories.length; i++) {
-          var c = categories[i];
-          var opt = document.createElement("option");
-          opt.value = c.id;
-          opt.textContent = c.name;
-          sel.appendChild(opt);
-        }
-      }
-
-      function parseTagsFromInput(s) {
-        var parts = String(s || "").split(",");
-        var out = [];
-        for (var i = 0; i < parts.length; i++) {
-          var t = trim(parts[i]);
-          if (t) out.push(t);
-        }
-        return out;
-      }
-
-        function resetForm(keepCategory) {
-            selectedId = null;
-
-            if (!keepCategory) {
-                $("catSelect").value = "none";
+    </main>
+
+    <div id="toast" class="toast">-</div>
+
+    <script type="text/javascript">
+        (function () {
+            "use strict";
+
+            function uuid() {
+                try {
+                    if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
+                    if (window.crypto && window.crypto.getRandomValues) {
+                        var buf = new Uint8Array(16);
+                        window.crypto.getRandomValues(buf);
+                        buf[6] = (buf[6] & 0x0f) | 0x40;
+                        buf[8] = (buf[8] & 0x3f) | 0x80;
+                        var hex = [];
+                        for (var i = 0; i < buf.length; i++) hex.push((buf[i] + 0x100).toString(16).slice(1));
+                        var h = hex.join("");
+                        return h.slice(0, 8) + "-" + h.slice(8, 12) + "-" + h.slice(12, 16) + "-" + h.slice(16, 20) + "-" + h.slice(20);
+                    }
+                } catch (e) { }
+                return "id-" + (new Date().getTime()) + "-" + Math.floor(Math.random() * 1e9);
             }
 
-            $("koInput").value = "";
-            $("enInput").value = "";
-            $("tagInput").value = "";
-            $("deleteBtn").disabled = true;
+            var LS_KEY_ITEMS = "sentence_memorizer_items_v2_compat";
+            var LS_KEY_STATS = "sentence_memorizer_stats_v2_compat";
+            var LS_KEY_CATS = "sentence_memorizer_categories_v2_compat";
+            var LS_KEY_THEME = "sentence_memorizer_theme_v1";
 
-            var radios = document.querySelectorAll("input[name='rowSelect']");
-            for (var i = 0; i < radios.length; i++) radios[i].checked = false;
+            function trim(s) { return String(s || "").replace(/^\s+|\s+$/g, ""); }
 
-            updateCatSelectStyle();
-        }
+            function clampInt(v, min, max) {
+                var n = Number(v);
+                if (!isFinite(n)) return min;
+                n = Math.floor(n);
+                if (n < min) n = min;
+                if (n > max) n = max;
+                return n;
+            }
 
-      $("saveBtn").addEventListener("click", function () {
-        var catId = String($("catSelect").value || "none");
-        var ko = trim($("koInput").value);
-        var en = trim($("enInput").value);
-        var tags = parseTagsFromInput($("tagInput").value);
-
-        if (!ko || !en) { toast("한국어/영어는 필수입니다."); return; }
-
-        var now = Date.now();
-
-        if (selectedId) {
-          var idx = -1;
-          for (var i = 0; i < items.length; i++) { if (items[i].id === selectedId) { idx = i; break; } }
-          if (idx >= 0) {
-            items[idx].catId = catId;
-            items[idx].ko = ko;
-            items[idx].en = en;
-            items[idx].tags = tags;
-            items[idx].updatedAt = now;
-            saveItems(items);
-            toast("수정 저장 완료");
-            renderList();
-            renderWrongList();
-            updateHeader();
-            refreshQuizPool();
-            return;
-          }
-        }
-
-        var it = {
-          id: uuid(),
-          catId: catId,
-          ko: ko,
-          en: en,
-          tags: tags,
-          createdAt: now,
-          updatedAt: now,
-          wrong: 0,
-          correct: 0,
-          attempts: 0
-        };
-        items.unshift(it);
-        saveItems(items);
-        toast("추가 완료");
-        resetForm(true);
-        renderList();
-        renderWrongList();
-        updateHeader();
-        refreshQuizPool();
-      });
-
-      $("resetStatsBtn").addEventListener("click", function () {
-        var ok = confirm("통계를 초기화합니다.\n(시도 수, 정답 수, 연속 정답이 모두 0으로 리셋됩니다)");
-        if (!ok) return;
-
-        saveStats({
-          attempts: 0,
-          correct: 0,
-          streak: 0,
-          bestStreak: 0
-        });
-
-        toast("통계 초기화 완료");
-        renderStats();
-        updateHeader();
-      });
-
-      $("resetFormBtn").addEventListener("click", function () { resetForm(); });
-
-      $("deleteBtn").addEventListener("click", function () {
-        if (!selectedId) return;
-        var ok = confirm("선택한 항목을 삭제합니다. (되돌릴 수 없음)");
-        if (!ok) return;
-        var out = [];
-        for (var i = 0; i < items.length; i++) if (items[i].id !== selectedId) out.push(items[i]);
-        items = out;
-        saveItems(items);
-        toast("삭제 완료");
-        resetForm();
-        renderList();
-        renderWrongList();
-        updateHeader();
-        refreshQuizPool();
-      });
-
-      $("searchInput").addEventListener("input", function () { renderList(); });
-      $("sortSelect").addEventListener("change", function () { renderList(); });
-      $("catFilterSelect").addEventListener("change", function () { renderList(); });
-
-      function renderList() {
-        var q = trim($("searchInput").value).toLowerCase();
-        var sort = $("sortSelect").value;
-        var catFilter = String($("catFilterSelect").value || "all");
-
-        var view = items.slice(0);
-
-        if (catFilter !== "all") {
-          var tmp = [];
-          for (var i = 0; i < view.length; i++) if (String(view[i].catId) === catFilter) tmp.push(view[i]);
-          view = tmp;
-        }
-
-        if (q) {
-          var filtered = [];
-          for (var k = 0; k < view.length; k++) {
-            var it = view[k];
-            var hay = (it.ko + " " + it.en + " " + it.tags.join(",")).toLowerCase();
-            if (hay.indexOf(q) >= 0) filtered.push(it);
-          }
-          view = filtered;
-        }
-
-        view.sort(function (a, b) {
-          if (sort === "updated_desc") return b.updatedAt - a.updatedAt;
-          if (sort === "created_desc") return b.createdAt - a.createdAt;
-          if (sort === "wrong_desc") return b.wrong - a.wrong;
-          return 0;
-        });
-
-        var tbody = $("listTbody");
-        tbody.innerHTML = "";
-
-        for (var i2 = 0; i2 < view.length; i2++) {
-          (function (it) {
-            var tr = document.createElement("tr");
-
-            var tdSel = document.createElement("td");
-            tdSel.setAttribute("data-label", "선택");
-            tdSel.innerHTML = '<input type="radio" name="rowSelect" value="' + escapeHtml(it.id) + '">';
-            tr.appendChild(tdSel);
-
-            var tdCat = document.createElement("td");
-            tdCat.setAttribute("data-label", "카테고리");
-            tdCat.innerHTML = catBadgeHtml(it.catId);
-            tr.appendChild(tdCat);
-
-            var tdKo = document.createElement("td");
-            tdKo.setAttribute("data-label", "한국어 뜻");
-            tdKo.textContent = it.ko;
-            tr.appendChild(tdKo);
-
-            var tdEn = document.createElement("td");
-            tdEn.setAttribute("data-label", "영어 문장");
-            tdEn.innerHTML = highlightPOS(it.en);
-            tr.appendChild(tdEn);
-
-            var tdTags = document.createElement("td");
-            tdTags.setAttribute("data-label", "태그");
-            tdTags.textContent = it.tags.join(", ");
-            tr.appendChild(tdTags);
-
-            var tdWrong = document.createElement("td");
-            tdWrong.setAttribute("data-label", "오답");
-            tdWrong.innerHTML = '<span class="badge">' + it.wrong + '</span>';
-            tr.appendChild(tdWrong);
-
-            tr.addEventListener("click", function () {
-              selectedId = it.id;
-              $("catSelect").value = String(it.catId || "none");
-              updateCatSelectStyle();
-              $("koInput").value = it.ko;
-              $("enInput").value = it.en;
-              $("tagInput").value = it.tags.join(", ");
-              $("deleteBtn").disabled = false;
-
-              var radio = tr.querySelector("input[name='rowSelect'][value='" + it.id + "']");
-              if (radio) radio.checked = true;
-
-              refreshQuizPool();
-            });
-
-            tbody.appendChild(tr);
-          })(view[i2]);
-        }
-
-        updateHeader();
-      }
-
-      function refreshCatManageInputsFromSelect() {
-        var id = String($("catManageSelect").value || "none");
-        var c = getCatById(id);
-        $("catNameInput").value = c.name;
-        $("catColorInput").value = c.color;
-        setCatPreviewColor(c.color);
-      }
-
-      $("catManageSelect").addEventListener("change", function () { refreshCatManageInputsFromSelect(); });
-
-      $("catAddBtn").addEventListener("click", function () {
-        var name = trim($("catNameInput").value);
-        var color = normalizeHexColor($("catColorInput").value);
-        if (!color) { toast("색상 HEX가 올바르지 않습니다. 예: #00BCD4"); return; }
-        if (!name) { toast("카테고리 이름이 필요합니다."); return; }
-
-        for (var i = 0; i < categories.length; i++) {
-          if (trim(categories[i].name) === name) {
-            var ok = confirm("같은 이름의 카테고리가 이미 있습니다. 그래도 추가할까요?");
-            if (!ok) return;
-            break;
-          }
-        }
-
-        var newCat = { id: "cat-" + uuid(), name: name, color: color };
-        categories.push(newCat);
-        saveCategories(categories);
-        renderCategorySelects();
-        $("catManageSelect").value = newCat.id;
-        refreshCatManageInputsFromSelect();
-        toast("카테고리 추가");
-        renderList();
-        renderWrongList();
-        refreshQuizPool();
-      });
-
-      $("catUpdateBtn").addEventListener("click", function () {
-        var id = String($("catManageSelect").value || "none");
-        if (id === "none") { toast("(없음)은 수정 불가"); return; }
-
-        var name = trim($("catNameInput").value);
-        if (!name) { toast("카테고리 이름이 필요합니다."); return; }
-
-        var color = normalizeHexColor($("catColorInput").value);
-        if (!color) { toast("색상 HEX가 올바르지 않습니다. 예: #00BCD4"); return; }
-
-        for (var i = 0; i < categories.length; i++) {
-          if (categories[i].id === id) {
-            categories[i].name = name;
-            categories[i].color = color;
-            saveCategories(categories);
-            renderCategorySelects();
-            $("catManageSelect").value = id;
-            toast("카테고리 수정");
-            renderList();
-            renderWrongList();
-            refreshQuizPool();
-            return;
-          }
-        }
-        toast("대상을 찾지 못함");
-      });
-
-      $("catDeleteBtn").addEventListener("click", function () {
-        var id = String($("catManageSelect").value || "none");
-        if (id === "none") { toast("(없음)은 삭제 불가"); return; }
-
-        var c = getCatById(id);
-        var ok = confirm("카테고리 삭제: " + c.name + "\n해당 카테고리를 쓰는 문장은 (없음)으로 바뀝니다.");
-        if (!ok) return;
-
-        var newCats = [];
-        for (var i = 0; i < categories.length; i++) if (categories[i].id !== id) newCats.push(categories[i]);
-        categories = newCats;
-
-        for (var j = 0; j < items.length; j++) {
-          if (String(items[j].catId) === id) items[j].catId = "none";
-        }
-
-        saveCategories(categories);
-        saveItems(items);
-
-        renderCategorySelects();
-        $("catManageSelect").value = "none";
-        refreshCatManageInputsFromSelect();
-        if ($("catSelect").value === id) $("catSelect").value = "none";
-
-        toast("카테고리 삭제");
-        renderList();
-        renderWrongList();
-        refreshQuizPool();
-      });
-
-      $("catColorInput").addEventListener("input", function () {
-        var hex = normalizeHexColor($("catColorInput").value);
-        setCatPreviewColor(hex || "#ffffff");
-      });
-
-      $("exportBtn").addEventListener("click", function () {
-        var payload = {
-          version: 2,
-          exportedAt: Date.now(),
-          categories: categories,
-          items: items,
-          stats: loadStats()
-        };
-        var json = JSON.stringify(payload, null, 2);
-
-        try {
-          var blob = new Blob([json], { type: "application/json" });
-          var url = URL.createObjectURL(blob);
-          var a = document.createElement("a");
-          a.href = url;
-          a.download = "english_sentence_memorizer_backup.json";
-          document.body.appendChild(a);
-          a.click();
-          a.parentNode.removeChild(a);
-          URL.revokeObjectURL(url);
-          toast("다운로드 완료");
-        } catch (e) {
-          var w = window.open();
-          if (w && w.document) {
-            w.document.write("<pre>" + escapeHtml(json) + "</pre>");
-            toast("새 창에 JSON 표시(복사해서 저장)");
-          } else {
-            toast("다운로드 실패(팝업 차단)");
-          }
-        }
-      });
-
-      $("importBtn").addEventListener("click", function () { $("importFile").click(); });
-
-      $("importFile").addEventListener("change", function (e) {
-        var file = (e.target.files && e.target.files[0]) ? e.target.files[0] : null;
-        if (!file) return;
-
-        var reader = new FileReader();
-        reader.onload = function () {
-          try {
-            var data = JSON.parse(String(reader.result || "{}"));
-
-            if (data && data.categories && data.categories.length) {
-              var existing = {};
-              for (var i = 0; i < categories.length; i++) existing[categories[i].id] = true;
-
-              var incomingCats = [];
-              for (var j = 0; j < data.categories.length; j++) {
-                var c = data.categories[j] || {};
-                var id = String((c.id != null) ? c.id : ("cat-" + uuid()));
-                var name = trim((c.name != null) ? c.name : "카테고리");
-                if (!name) name = "카테고리";
-                var color = normalizeHexColor(c.color) || "#2563eb";
-
-                if (id === "none") continue;
-                if (existing[id]) id = "cat-" + uuid();
-
-                incomingCats.push({ id: id, name: name, color: color });
-              }
-
-              categories = categories.concat(incomingCats);
-
-              categories = (function (arr) {
-                var noneObj = { id: "none", name: "(없음)", color: "#9ca3af" };
-                var rest = [];
-                for (var k = 0; k < arr.length; k++) {
-                  if (arr[k].id === "none") noneObj = arr[k];
-                  else rest.push(arr[k]);
+            // (태그 UI는 삭제했지만, 기존 저장 데이터 호환을 위해 유지)
+            function normalizeTags(tags) {
+                var out = [];
+                if (!tags) return out;
+                if (Object.prototype.toString.call(tags) === "[object Array]") {
+                    for (var i = 0; i < tags.length; i++) {
+                        var t = trim(tags[i]);
+                        if (t) out.push(t);
+                    }
+                    return out;
                 }
-                var out = [noneObj];
-                for (var t = 0; t < rest.length; t++) out.push(rest[t]);
+                var s = String(tags);
+                var parts = s.split(",");
+                for (var j = 0; j < parts.length; j++) {
+                    var tt = trim(parts[j]);
+                    if (tt) out.push(tt);
+                }
                 return out;
-              })(categories);
-
-              saveCategories(categories);
             }
 
-            if (data && data.items && data.items.length) {
-              var existingIds = {};
-              for (var ii = 0; ii < items.length; ii++) existingIds[items[ii].id] = true;
+            function escapeHtml(s) {
+                return String(s).replace(/[&<>"']/g, function (m) {
+                    return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[m];
+                });
+            }
 
-              var incoming = [];
-              for (var jj = 0; jj < data.items.length; jj++) {
-                var x = data.items[jj] || {};
+            function fmtDate(ts) {
+                var d = new Date(ts);
+                var y = d.getFullYear();
+                var m = String(d.getMonth() + 1); if (m.length < 2) m = "0" + m;
+                var day = String(d.getDate()); if (day.length < 2) day = "0" + day;
+                var hh = String(d.getHours()); if (hh.length < 2) hh = "0" + hh;
+                var mm = String(d.getMinutes()); if (mm.length < 2) mm = "0" + mm;
+                return y + "-" + m + "-" + day + " " + hh + ":" + mm;
+            }
+
+            function normalizeHexColor(s) {
+                var x = trim(s).toUpperCase();
+                if (!x) return null;
+                if (x.charAt(0) !== "#") x = "#" + x;
+
+                var m3 = x.match(/^#([0-9A-F]{3})$/);
+                if (m3) {
+                    var r = m3[1].charAt(0), g = m3[1].charAt(1), b = m3[1].charAt(2);
+                    return "#" + r + r + g + g + b + b;
+                }
+                if (/^#[0-9A-F]{6}$/.test(x)) return x;
+                return null;
+            }
+
+            function textColorForBg(hex) {
+                try {
+                    var h = String(hex || "").replace("#", "");
+                    if (h.length !== 6) return "#111";
+                    var r = parseInt(h.slice(0, 2), 16);
+                    var g = parseInt(h.slice(2, 4), 16);
+                    var b = parseInt(h.slice(4, 6), 16);
+                    var y = (r * 299 + g * 587 + b * 114) / 1000;
+                    return (y >= 160) ? "#111" : "#fff";
+                } catch (e) {
+                    return "#111";
+                }
+            }
+
+            function $(id) { return document.getElementById(id); }
+
+            var PASTEL_COLORS = [
+                "#FFD6E7", "#FFEDCC", "#FFF6BF", "#D9F7BE", "#CFFAFE",
+                "#D6E4FF", "#E9D5FF", "#FFE4D6", "#E0F2FE", "#DCFCE7"
+            ];
+
+            // ✅ 팔레트는 하나만 사용(추가/수정 공용)
+            var selectedPastel = PASTEL_COLORS[0];
+
+            function renderPastelPalette() {
+                var box = $("pastelPalette");
+                if (!box) return;
+                box.innerHTML = "";
+
+                for (var i = 0; i < PASTEL_COLORS.length; i++) {
+                    (function (hex) {
+                        var btn = document.createElement("button");
+                        btn.type = "button";
+                        btn.style.width = "34px";
+                        btn.style.height = "34px";
+                        btn.style.borderRadius = "999px";
+                        btn.style.border = (hex === selectedPastel) ? "3px solid var(--ink)" : "1px solid var(--line)";
+                        btn.style.background = hex;
+                        btn.style.padding = "0";
+                        btn.title = hex;
+
+                        btn.addEventListener("click", function () {
+                            selectedPastel = hex;
+                            renderPastelPalette();
+                        });
+
+                        box.appendChild(btn);
+                    })(PASTEL_COLORS[i]);
+                }
+            }
+
+            function getCheckedCategoryIds() {
+                var box = $("catListBox");
+                if (!box) return [];
+                var inputs = box.querySelectorAll("input[type='checkbox'][data-catid]");
+                var out = [];
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].checked) out.push(String(inputs[i].getAttribute("data-catid")));
+                }
+                return out;
+            }
+
+            function updateCatDeleteButtonState() {
+                var ids = getCheckedCategoryIds();
+                var btn = $("catBulkDeleteBtn2");
+                if (btn) btn.disabled = (ids.length === 0);
+            }
+
+            function countItemsByCatId(catId) {
+                var n = 0;
+                for (var i = 0; i < items.length; i++) {
+                    if (String(items[i].catId) === String(catId)) n++;
+                }
+                return n;
+            }
+
+            function renderCategoryCheckboxList() {
+                var box = $("catListBox");
+                if (!box) return;
+
+                box.innerHTML = "";
+                for (var i = 0; i < categories.length; i++) {
+                    var c = categories[i];
+                    var disabled = (c.id === "none");
+
+                    var row = document.createElement("label");
+                    row.style.display = "flex";
+                    row.style.alignItems = "center";
+                    row.style.gap = "10px";
+                    row.style.padding = "8px 6px";
+                    row.style.borderRadius = "10px";
+                    row.style.cursor = disabled ? "not-allowed" : "pointer";
+
+                    var chk = document.createElement("input");
+                    chk.type = "checkbox";
+                    chk.setAttribute("data-catid", c.id);
+                    chk.disabled = disabled;
+                    chk.addEventListener("change", updateCatDeleteButtonState);
+
+                    var swatch = document.createElement("span");
+                    swatch.style.width = "16px";
+                    swatch.style.height = "16px";
+                    swatch.style.borderRadius = "6px";
+                    swatch.style.background = c.color;
+                    swatch.style.border = "1px solid var(--line)";
+                    swatch.style.flex = "0 0 auto";
+
+                    var name = document.createElement("span");
+                    var cnt = countItemsByCatId(c.id);
+                    name.textContent = c.name + " (" + cnt + ")";
+                    name.style.fontWeight = "900";
+                    name.style.color = "var(--ink)";
+
+                    row.appendChild(chk);
+                    row.appendChild(swatch);
+                    row.appendChild(name);
+
+                    box.appendChild(row);
+                }
+
+                updateCatDeleteButtonState();
+            }
+
+            function toast(msg) {
+                var t = $("toast");
+                t.textContent = msg;
+                t.className = "toast show";
+                setTimeout(function () { t.className = "toast"; }, 1200);
+            }
+
+            function loadItems() {
+                try {
+                    var raw = localStorage.getItem(LS_KEY_ITEMS);
+                    if (!raw) return [];
+                    var arr = JSON.parse(raw);
+                    if (!arr || !arr.length) return [];
+                    var out = [];
+                    for (var i = 0; i < arr.length; i++) {
+                        var x = arr[i] || {};
+                        var now = Date.now();
+                        out.push({
+                            id: String((x.id != null) ? x.id : uuid()),
+                            catId: String((x.catId != null) ? x.catId : "none"),
+                            ko: String((x.ko != null) ? x.ko : ""),
+                            en: String((x.en != null) ? x.en : ""),
+                            tags: normalizeTags(x.tags), // 호환용
+                            createdAt: Number((x.createdAt != null) ? x.createdAt : now),
+                            updatedAt: Number((x.updatedAt != null) ? x.updatedAt : now),
+                            wrong: clampInt((x.wrong != null) ? x.wrong : 0, 0, 1000000000),
+                            correct: clampInt((x.correct != null) ? x.correct : 0, 0, 1000000000),
+                            attempts: clampInt((x.attempts != null) ? x.attempts : 0, 0, 1000000000)
+                        });
+                    }
+                    return out;
+                } catch (e) { return []; }
+            }
+
+            function saveItems(items) { localStorage.setItem(LS_KEY_ITEMS, JSON.stringify(items)); }
+
+            function loadStats() {
+                try {
+                    var raw = localStorage.getItem(LS_KEY_STATS);
+                    if (!raw) return { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
+                    var s = JSON.parse(raw) || {};
+                    return {
+                        attempts: clampInt((s.attempts != null) ? s.attempts : 0, 0, 1000000000),
+                        correct: clampInt((s.correct != null) ? s.correct : 0, 0, 1000000000),
+                        streak: clampInt((s.streak != null) ? s.streak : 0, 0, 1000000000),
+                        bestStreak: clampInt((s.bestStreak != null) ? s.bestStreak : 0, 0, 1000000000)
+                    };
+                } catch (e) {
+                    return { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
+                }
+            }
+
+            function saveStats(stats) { localStorage.setItem(LS_KEY_STATS, JSON.stringify(stats)); }
+
+            function defaultCategories() {
+                return [
+                    { id: "none", name: "(없음)", color: "#9ca3af" },
+                    { id: "cat-" + uuid(), name: "일상", color: "#2563eb" },
+                    { id: "cat-" + uuid(), name: "여행", color: "#7c3aed" }
+                ];
+            }
+
+            function loadCategories() {
+                try {
+                    var raw = localStorage.getItem(LS_KEY_CATS);
+                    if (!raw) return defaultCategories();
+                    var arr = JSON.parse(raw);
+                    if (!arr || !arr.length) return defaultCategories();
+
+                    var hasNone = false;
+                    for (var i = 0; i < arr.length; i++) if (arr[i] && String(arr[i].id) === "none") { hasNone = true; break; }
+                    if (!hasNone) arr.unshift({ id: "none", name: "(없음)", color: "#9ca3af" });
+
+                    var out = [];
+                    for (var j = 0; j < arr.length; j++) {
+                        var c = arr[j] || {};
+                        var id = String((c.id != null) ? c.id : ("cat-" + uuid()));
+                        var name = trim((c.name != null) ? c.name : "카테고리");
+                        if (!name) name = "카테고리";
+                        var color = normalizeHexColor(c.color) || "#2563eb";
+                        out.push({ id: id, name: name, color: color });
+                    }
+
+                    var finalArr = [];
+                    var noneObj = null;
+                    for (var k = 0; k < out.length; k++) if (out[k].id === "none") { noneObj = out[k]; break; }
+                    if (!noneObj) noneObj = { id: "none", name: "(없음)", color: "#9ca3af" };
+                    finalArr.push(noneObj);
+                    for (var t = 0; t < out.length; t++) if (out[t].id !== "none") finalArr.push(out[t]);
+
+                    return finalArr;
+                } catch (e) {
+                    return defaultCategories();
+                }
+            }
+
+            function saveCategories(cats) { localStorage.setItem(LS_KEY_CATS, JSON.stringify(cats)); }
+
+            function findCatById(id) {
+                for (var i = 0; i < categories.length; i++) if (categories[i].id === id) return categories[i];
+                return null;
+            }
+
+            function getCatById(id) {
+                var c = findCatById(id);
+                if (c) return c;
+                return categories[0] || { id: "none", name: "(없음)", color: "#9ca3af" };
+            }
+
+            function catBadgeHtml(catId) {
+                var c = getCatById(catId);
+                var fg = textColorForBg(c.color);
+                return "<span class='catbadge' style='background:" + escapeHtml(c.color) + "; color:" + fg + ";'>" + escapeHtml(c.name) + "</span>";
+            }
+
+            function updateCatSelectStyle() {
+                var sel = $("catSelect");
+                if (!sel) return;
+
+                var catId = sel.value || "none";
+                var c = getCatById(catId);
+                var fg = textColorForBg(c.color);
+
+                sel.style.background = c.color;
+                sel.style.color = fg;
+                sel.style.borderColor = "var(--line)";
+            }
+
+            function highlightPOS(sentence) {
+                sentence = String(sentence || "");
+                if (!sentence) return "";
+                if (!window.nlp) return escapeHtml(sentence);
+
+                try {
+                    var doc = window.nlp(sentence);
+                    var terms = doc.terms().json({ offset: true });
+
+                    var firstVerbIndex = -1;
+                    for (var i = 0; i < terms.length; i++) {
+                        if (terms[i].tags && terms[i].tags.Verb) { firstVerbIndex = i; break; }
+                    }
+                    var subjectIndex = -1;
+                    if (firstVerbIndex !== -1) {
+                        for (var j = 0; j < firstVerbIndex; j++) {
+                            var tg = terms[j].tags || {};
+                            if (tg.Noun || tg.Pronoun) { subjectIndex = j; break; }
+                        }
+                    }
+
+                    var out = "";
+                    var cursor = 0;
+
+                    for (var k = 0; k < terms.length; k++) {
+                        var t = terms[k];
+                        var off = t.offset || {};
+                        var start = (off.start != null) ? off.start : cursor;
+                        var end = (off.end != null) ? off.end : (start + String(t.text || "").length);
+
+                        out += escapeHtml(sentence.slice(cursor, start));
+
+                        var cls = "";
+                        if (k === subjectIndex) cls = "pos-subj";
+                        else if (t.tags && t.tags.Verb) cls = "pos-verb";
+                        else if (t.tags && t.tags.Adjective) cls = "pos-adj";
+                        else if (t.tags && t.tags.Adverb) cls = "pos-adv";
+
+                        var seg = sentence.slice(start, end);
+                        if (cls) out += "<span class='" + cls + "'>" + escapeHtml(seg) + "</span>";
+                        else out += escapeHtml(seg);
+
+                        cursor = end;
+                    }
+
+                    out += escapeHtml(sentence.slice(cursor));
+                    return out;
+                } catch (e) {
+                    return escapeHtml(sentence);
+                }
+            }
+
+            var items = loadItems();
+            var categories = loadCategories();
+            var selectedId = null;
+
+            var quizPool = [];
+            var quizIndex = 0;
+            var currentItem = null;
+            var quizMode = "random";
+
+            var selectedItemIds = {};
+
+            function setTab(tab) {
+                var btns = document.querySelectorAll(".tabbtn");
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].className = "tabbtn" + ((btns[i].getAttribute("data-tab") === tab) ? " active" : "");
+                }
+                $("tab-manage").style.display = (tab === "manage") ? "" : "none";
+                $("tab-quiz").style.display = (tab === "quiz") ? "" : "none";
+                $("tab-stats").style.display = (tab === "stats") ? "" : "none";
+                if (tab === "stats") renderStats();
+                if (tab === "quiz") refreshQuizPool(false);
+            }
+
+            var tabButtons = document.querySelectorAll(".tabbtn");
+            for (var tb = 0; tb < tabButtons.length; tb++) {
+                tabButtons[tb].addEventListener("click", (function (btn) {
+                    return function () { setTab(btn.getAttribute("data-tab")); };
+                })(tabButtons[tb]));
+            }
+
+            function renderCategorySelects() {
+                fillCatSelect($("catSelect"));
+                fillCatFilterSelect($("catFilterSelect"));
+                fillCatFilterSelect($("quizCatFilter"));
+
+                var bulkSel = $("bulkChangeCatSelect");
+                if (bulkSel) {
+                    bulkSel.innerHTML = "";
+                    var ph = document.createElement("option");
+                    ph.value = "";
+                    ph.textContent = "카테고리 변경";
+                    bulkSel.appendChild(ph);
+
+                    for (var i = 0; i < categories.length; i++) {
+                        var c = categories[i];
+                        var opt = document.createElement("option");
+                        opt.value = c.id;
+                        opt.textContent = c.name;
+                        bulkSel.appendChild(opt);
+                    }
+                }
+                fillCatEditSelect();
+            }
+
+            // ✅ 수정 셀렉트가 options를 갈아엎어도 선택/입력/팔레트 동기화 유지
+            function fillCatEditSelect() {
+                var sel = $("catEditSelect");
+                if (!sel) return;
+
+                var prev = String(sel.value || "");
+                sel.innerHTML = "";
+
+                for (var i = 0; i < categories.length; i++) {
+                    var c = categories[i];
+                    if (c.id === "none") continue;
+
+                    var opt = document.createElement("option");
+                    opt.value = c.id;
+                    opt.textContent = c.name;
+                    sel.appendChild(opt);
+                }
+
+                if (sel.options.length > 0) {
+                    var exists = false;
+                    for (var j = 0; j < sel.options.length; j++) {
+                        if (sel.options[j].value === prev) { exists = true; break; }
+                    }
+                    sel.value = exists ? prev : sel.options[0].value;
+                    sel.dispatchEvent(new Event("change"));
+                } else {
+                    // 카테고리가 none만 남은 경우
+                    $("catEditNameInput").value = "";
+                }
+            }
+
+            function fillCatSelect(sel) {
+                if (!sel) return;
+                sel.innerHTML = "";
+                for (var i = 0; i < categories.length; i++) {
+                    var c = categories[i];
+                    var opt = document.createElement("option");
+                    opt.value = c.id;
+                    opt.textContent = c.name;
+                    sel.appendChild(opt);
+                }
+            }
+
+            function fillCatFilterSelect(sel) {
+                if (!sel) return;
+                sel.innerHTML = "";
+                var optAll = document.createElement("option");
+                optAll.value = "all";
+                optAll.textContent = "전체";
+                sel.appendChild(optAll);
+
+                for (var i = 0; i < categories.length; i++) {
+                    var c = categories[i];
+                    var opt = document.createElement("option");
+                    opt.value = c.id;
+                    opt.textContent = c.name;
+                    sel.appendChild(opt);
+                }
+            }
+
+            function resetForm(keepCategory) {
+                selectedId = null;
+
+                if (!keepCategory) {
+                    $("catSelect").value = "none";
+                }
+
+                $("koInput").value = "";
+                $("enInput").value = "";
+                $("deleteBtn").disabled = true;
+
+                updateCatSelectStyle();
+            }
+
+            $("saveBtn").addEventListener("click", function () {
+                var catId = String($("catSelect").value || "none");
+                var ko = trim($("koInput").value);
+                var en = trim($("enInput").value);
+
+                if (!ko || !en) { toast("한국어/영어는 필수입니다."); return; }
+
                 var now = Date.now();
+
+                if (selectedId) {
+                    var idx = -1;
+                    for (var i = 0; i < items.length; i++) { if (items[i].id === selectedId) { idx = i; break; } }
+                    if (idx >= 0) {
+                        items[idx].catId = catId;
+                        items[idx].ko = ko;
+                        items[idx].en = en;
+                        items[idx].tags = []; // ✅ 태그 UI 삭제: 저장 시 비움(기존 데이터는 유지 가능)
+                        items[idx].updatedAt = now;
+                        saveItems(items);
+                        toast("수정 저장 완료");
+                        renderList();
+                        renderWrongList();
+                        updateHeader();
+                        refreshQuizPool(false);
+                        renderCategoryCheckboxList();
+                        return;
+                    }
+                }
+
                 var it = {
-                  id: String((x.id != null) ? x.id : uuid()),
-                  catId: String((x.catId != null) ? x.catId : "none"),
-                  ko: trim((x.ko != null) ? x.ko : ""),
-                  en: trim((x.en != null) ? x.en : ""),
-                  tags: normalizeTags(x.tags),
-                  createdAt: Number((x.createdAt != null) ? x.createdAt : now),
-                  updatedAt: Number((x.updatedAt != null) ? x.updatedAt : now),
-                  wrong: clampInt((x.wrong != null) ? x.wrong : 0, 0, 1000000000),
-                  correct: clampInt((x.correct != null) ? x.correct : 0, 0, 1000000000),
-                  attempts: clampInt((x.attempts != null) ? x.attempts : 0, 0, 1000000000)
+                    id: uuid(),
+                    catId: catId,
+                    ko: ko,
+                    en: en,
+                    tags: [], // ✅
+                    createdAt: now,
+                    updatedAt: now,
+                    wrong: 0,
+                    correct: 0,
+                    attempts: 0
                 };
-
-                if (!findCatById(it.catId)) it.catId = "none";
-                if (existingIds[it.id]) it.id = uuid();
-                incoming.push(it);
-              }
-
-              items = incoming.concat(items);
-              saveItems(items);
-            }
-
-            if (data && data.stats) {
-              saveStats({
-                attempts: clampInt((data.stats.attempts != null) ? data.stats.attempts : 0, 0, 1000000000),
-                correct: clampInt((data.stats.correct != null) ? data.stats.correct : 0, 0, 1000000000),
-                streak: clampInt((data.stats.streak != null) ? data.stats.streak : 0, 0, 1000000000),
-                bestStreak: clampInt((data.stats.bestStreak != null) ? data.stats.bestStreak : 0, 0, 1000000000)
-              });
-            }
-
-            toast("불러오기 완료");
-            renderCategorySelects();
-            resetForm();
-            renderList();
-            renderWrongList();
-            renderStats();
-            refreshQuizPool();
-          } catch (err) {
-            toast("불러오기 실패");
-          } finally {
-            $("importFile").value = "";
-          }
-        };
-        reader.onerror = function () { toast("불러오기 실패"); $("importFile").value = ""; };
-        reader.readAsText(file);
-      });
-
-      $("wipeBtn").addEventListener("click", function () {
-        var ok = confirm("전체 초기화합니다. (문장/통계/카테고리 모두 삭제)");
-        if (!ok) return;
-        localStorage.removeItem(LS_KEY_ITEMS);
-        localStorage.removeItem(LS_KEY_STATS);
-        localStorage.removeItem(LS_KEY_CATS);
-
-        categories = defaultCategories();
-        saveCategories(categories);
-
-        items = [];
-        resetForm();
-        toast("초기화 완료");
-        renderCategorySelects();
-        renderList();
-        renderWrongList();
-        renderStats();
-        refreshQuizPool();
-        updateHeader();
-      });
-
-      $("modeSelect").addEventListener("change", function () { refreshQuizPool(); });
-      $("quizCatFilter").addEventListener("change", function () { refreshQuizPool(); });
-      $("tagFilter").addEventListener("input", function () { refreshQuizPool(); });
-
-      $("startQuizBtn").addEventListener("click", function () { nextQuestion(); });
-      $("shuffleBtn").addEventListener("click", function () {
-        quizIndex = 0;
-        currentItem = null;
-        shuffle(quizPool);
-        clearQuizUI();
-        toast("재시작");
-        updateQuizProgress();
-      });
-
-      $("submitBtn").addEventListener("click", function () { grade(); });
-      $("skipBtn").addEventListener("click", function () { nextQuestion(); });
-      $("revealBtn").addEventListener("click", function () { revealAnswer(); });
-      $("copyAnswerBtn").addEventListener("click", function () {
-        if (!currentItem) return;
-        var text = currentItem.en;
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(function () { toast("정답 복사 완료"); }, function () { toast("복사 실패"); });
-          } else {
-            fallbackCopy(text);
-          }
-        } catch (e) { fallbackCopy(text); }
-      });
-
-      function fallbackCopy(text) {
-        try {
-          var ta = document.createElement("textarea");
-          ta.value = text;
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand("copy");
-          document.body.removeChild(ta);
-          toast("정답 복사 완료");
-        } catch (e) { toast("복사 실패"); }
-      }
-
-      $("answerInput").addEventListener("keydown", function (e) {
-        if (e.ctrlKey && e.keyCode === 13) {
-          e.preventDefault();
-          if (!$("submitBtn").disabled) grade();
-        }
-      });
-
-      function refreshQuizPool() {
-        quizMode = $("modeSelect").value;
-        var tagFilter = trim($("tagFilter").value).toLowerCase();
-        var catFilter = String($("quizCatFilter").value || "all");
-
-        var pool = [];
-        for (var i = 0; i < items.length; i++) {
-          var it = items[i];
-          if (quizMode === "wrongbook" && !(it.wrong > 0)) continue;
-          if (catFilter !== "all" && String(it.catId) !== catFilter) continue;
-
-          if (tagFilter) {
-            var ok = false;
-            for (var j = 0; j < it.tags.length; j++) {
-              if (String(it.tags[j]).toLowerCase() === tagFilter) { ok = true; break; }
-            }
-            if (!ok) continue;
-          }
-          pool.push(it);
-        }
-
-        quizPool = pool;
-        if (quizMode === "random") shuffle(quizPool);
-        if (quizMode === "wrongbook") quizPool.sort(function (a, b) { return b.wrong - a.wrong; });
-
-        $("poolCount").textContent = String(quizPool.length);
-        updateQuizProgress();
-
-        if (currentItem && !containsId(quizPool, currentItem.id)) {
-          currentItem = null;
-          quizIndex = 0;
-          clearQuizUI();
-        }
-      }
-
-      function containsId(arr, id) {
-        for (var i = 0; i < arr.length; i++) if (arr[i].id === id) return true;
-        return false;
-      }
-
-      function updateQuizProgress() {
-        var total = quizPool.length;
-        var cur = currentItem ? Math.min(quizIndex + 1, total) : Math.min(quizIndex, total);
-        $("quizProgress").textContent = String(cur) + " / " + String(total);
-      }
-
-      function clearQuizUI() {
-        $("koPrompt").textContent = "-";
-        $("answerInput").value = "";
-        $("submitBtn").disabled = true;
-        $("skipBtn").disabled = (quizPool.length === 0);
-        $("revealBtn").disabled = true;
-        $("copyAnswerBtn").disabled = true;
-        $("resultArea").style.display = "none";
-      }
-
-      function nextQuestion() {
-        refreshQuizPool();
-        if (quizPool.length === 0) { toast("문항이 없습니다."); clearQuizUI(); return; }
-
-        if (quizMode === "random") {
-          currentItem = quizPool[Math.floor(Math.random() * quizPool.length)];
-        } else {
-          if (quizIndex >= quizPool.length) quizIndex = 0;
-          currentItem = quizPool[quizIndex];
-          quizIndex++;
-        }
-
-        $("koPrompt").textContent = currentItem.ko;
-        $("answerInput").value = "";
-        $("submitBtn").disabled = false;
-        $("skipBtn").disabled = false;
-        $("revealBtn").disabled = false;
-        $("copyAnswerBtn").disabled = true;
-
-        $("resultArea").style.display = "none";
-        updateQuizProgress();
-      }
-
-      function revealAnswer() {
-        if (!currentItem) return;
-        $("resultArea").style.display = "";
-        $("resultBadge").textContent = "정답 공개(채점 아님)";
-        $("scoreText").textContent = "";
-        $("answerArea").textContent = currentItem.en;
-        $("diffArea").innerHTML = '<div class="muted">채점 없이 정답만 보여줍니다.</div>';
-
-        var c = getCatById(currentItem.catId);
-        $("itemMeta").textContent =
-          "카테고리: " + c.name + " · tags: " + (currentItem.tags.join(", ") || "-") +
-          " · updated: " + fmtDate(currentItem.updatedAt);
-
-        $("copyAnswerBtn").disabled = false;
-      }
-
-      function normalizeEn(s) {
-        var x = String(s || "").toLowerCase();
-        x = x.replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
-        x = x.replace(/\bi['’]?m\b/g, "i am");
-        x = x.replace(/\bcan['’]?t\b/g, "cannot");
-        x = x.replace(/\bdon['’]?t\b/g, "do not");
-        x = x.replace(/\bwon['’]?t\b/g, "will not");
-        x = x.replace(/\bit['’]?s\b/g, "it is");
-        x = x.replace(/\bthat['’]?s\b/g, "that is");
-        x = x.replace(/\bthere['’]?s\b/g, "there is");
-        x = x.replace(/\bhere['’]?s\b/g, "here is");
-        x = x.replace(/\b(it|that|there|here)\s*['’]?\s*s\b/g, "$1 is");
-        x = x.replace(/[^a-z0-9\s]/g, " ");
-        x = x.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
-        return x;
-      }
-
-      function tokenizeForDiff(s) {
-        var x = normalizeEn(s);
-        if (!x) return [];
-        return x.split(" ");
-      }
-
-      function lcsMatrix(a, b) {
-        var n = a.length, m = b.length;
-        var dp = [];
-        for (var i = 0; i <= n; i++) {
-          dp[i] = [];
-          for (var j = 0; j <= m; j++) dp[i][j] = 0;
-        }
-        for (var ii = 1; ii <= n; ii++) {
-          for (var jj = 1; jj <= m; jj++) {
-            dp[ii][jj] = (a[ii - 1] === b[jj - 1]) ? (dp[ii - 1][jj - 1] + 1) : Math.max(dp[ii - 1][jj], dp[ii][jj - 1]);
-          }
-        }
-        return dp;
-      }
-
-      function lcsMatchedInputIndexes(a, b) {
-        var dp = lcsMatrix(a, b);
-        var i = a.length, j = b.length;
-        var matched = {};
-        while (i > 0 && j > 0) {
-          if (a[i - 1] === b[j - 1]) {
-            matched[i - 1] = true;
-            i--; j--;
-          } else {
-            if (dp[i - 1][j] >= dp[i][j - 1]) i--;
-            else j--;
-          }
-        }
-        return matched;
-      }
-
-      function buildMarkedInputHtml(input, expected) {
-        var a = tokenizeForDiff(input);
-        var b = tokenizeForDiff(expected);
-
-        if (a.length === 0) return '<div class="muted">입력이 비어있습니다.</div>';
-
-        var matched = lcsMatchedInputIndexes(a, b);
-        var parts = [];
-        for (var i = 0; i < a.length; i++) {
-          var w = a[i];
-          var cls = matched[i] ? "good" : "bad";
-          parts.push('<span class="' + cls + '">' + escapeHtml(w) + '</span>');
-        }
-        return '<div class="mono" style="white-space:normal; line-height:1.9;">' + parts.join(" ") + '</div>';
-      }
-
-      function grade() {
-        if (!currentItem) return;
-
-        var input = trim($("answerInput").value);
-        if (!input) { toast("입력이 비어있습니다."); return; }
-
-        var expected = currentItem.en;
-
-        var normInput = normalizeEn(input);
-        var normExpected = normalizeEn(expected);
-
-        var isCorrect = (normInput === normExpected);
-
-        var stats = loadStats();
-        stats.attempts += 1;
-        currentItem.attempts += 1;
-
-        if (isCorrect) {
-          stats.correct += 1;
-          stats.streak += 1;
-          if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
-          currentItem.correct += 1;
-        } else {
-          stats.streak = 0;
-          currentItem.wrong += 1;
-        }
-
-        saveStats(stats);
-
-        var idx = -1;
-        for (var i = 0; i < items.length; i++) {
-          if (items[i].id === currentItem.id) { idx = i; break; }
-        }
-        if (idx >= 0) items[idx] = currentItem;
-        saveItems(items);
-
-        $("resultArea").style.display = "";
-
-        var emoji = isCorrect ? "⭕" : "❌";
-        $("resultBadge").textContent = (isCorrect ? (emoji + " 정답") : (emoji + " 오답"));
-        $("resultBadge").style.background = isCorrect ? "#16a34a20" : "#ef444420";
-        $("resultBadge").style.borderColor = isCorrect ? "#22c55e55" : "#ef444455";
-
-        $("myAnswerArea").innerHTML = buildMarkedInputHtml(input, expected);
-        $("answerArea").textContent = expected;
-
-        var c = getCatById(currentItem.catId);
-        $("itemMeta").textContent =
-          "카테고리: " + c.name + " · tags: " + (currentItem.tags.join(", ") || "-") +
-          " · updated: " + fmtDate(currentItem.updatedAt);
-
-        $("copyAnswerBtn").disabled = false;
-
-        renderList();
-        renderWrongList();
-        renderStats();
-        updateHeader();
-
-        toast(isCorrect ? "정답" : "오답");
-      }
-
-      function shuffle(arr) {
-        for (var i = arr.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1));
-          var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
-        }
-      }
-
-      $("clearWrongBtn").addEventListener("click", function () {
-        var ok = confirm("오답 카운트를 전체 초기화합니다. (문장은 유지)");
-        if (!ok) return;
-        for (var i = 0; i < items.length; i++) items[i].wrong = 0;
-        saveItems(items);
-        toast("오답 초기화 완료");
-        renderWrongList();
-        renderList();
-        refreshQuizPool();
-      });
-
-      function renderWrongList() {
-        var view = [];
-        for (var i = 0; i < items.length; i++) if (items[i].wrong > 0) view.push(items[i]);
-        view.sort(function (a, b) { return b.wrong - a.wrong; });
-
-        var tbody = $("wrongTbody");
-        tbody.innerHTML = "";
-
-        for (var k = 0; k < view.length; k++) {
-          (function (it) {
-            var tr = document.createElement("tr");
-
-            var tdWrong = document.createElement("td");
-            tdWrong.setAttribute("data-label", "오답");
-            tdWrong.innerHTML = "<span class='badge'>" + it.wrong + "</span>";
-            tr.appendChild(tdWrong);
-
-            var tdCat = document.createElement("td");
-            tdCat.setAttribute("data-label", "카테고리");
-            tdCat.innerHTML = catBadgeHtml(it.catId);
-            tr.appendChild(tdCat);
-
-            var tdKo = document.createElement("td");
-            tdKo.setAttribute("data-label", "한국어 뜻");
-            tdKo.textContent = it.ko;
-            tr.appendChild(tdKo);
-
-            var tdEn = document.createElement("td");
-            tdEn.setAttribute("data-label", "영어 문장");
-            tdEn.innerHTML = highlightPOS(it.en);
-            tr.appendChild(tdEn);
-
-            var tdTags = document.createElement("td");
-            tdTags.setAttribute("data-label", "태그");
-            tdTags.textContent = it.tags.join(", ");
-            tr.appendChild(tdTags);
-
-            tr.addEventListener("click", function () {
-              setTab("manage");
-              selectedId = it.id;
-              $("catSelect").value = String(it.catId || "none");
-              updateCatSelectStyle();
-              $("koInput").value = it.ko;
-              $("enInput").value = it.en;
-              $("tagInput").value = it.tags.join(", ");
-              $("deleteBtn").disabled = false;
-              renderList();
-              toast("폼에 로드됨");
+                items.unshift(it);
+                saveItems(items);
+                toast("추가 완료");
+                resetForm(true);
+                renderList();
+                renderWrongList();
+                updateHeader();
+                refreshQuizPool(false);
+                renderCategoryCheckboxList();
             });
 
-            tbody.appendChild(tr);
-          })(view[k]);
-        }
-      }
+            $("resetStatsBtn").addEventListener("click", function () {
+                var ok = confirm("통계를 초기화합니다.\n(시도 수, 정답 수, 연속 정답이 모두 0으로 리셋됩니다)");
+                if (!ok) return;
 
-      function renderStats() {
-        var stats = loadStats();
-        $("statTotal").textContent = String(items.length);
-        $("statAttempts").textContent = String(stats.attempts);
-        $("statCorrect").textContent = String(stats.correct);
-        var acc = stats.attempts ? Math.round((stats.correct / stats.attempts) * 100) : 0;
-        $("statAcc").textContent = String(acc) + "%";
-        $("statStreak").textContent = String(stats.streak);
-        $("statBestStreak").textContent = String(stats.bestStreak);
-        renderWrongList();
-        updateHeader();
-      }
+                saveStats({
+                    attempts: 0,
+                    correct: 0,
+                    streak: 0,
+                    bestStreak: 0
+                });
 
-      function updateHeader() {
-        $("headerCount").textContent = "문장 " + items.length + "개";
-        var stats = loadStats();
-        $("headerStreak").textContent = "연속 정답 " + stats.streak;
-      }
+                toast("통계 초기화 완료");
+                renderStats();
+                updateHeader();
+            });
 
-      function init() {
-        function applyTheme(theme) {
-          theme = theme || "dark";
-          if (theme !== "light" && theme !== "dark") theme = "dark";
-          document.documentElement.setAttribute("data-theme", theme);
-          try { localStorage.setItem(LS_KEY_THEME, theme); } catch (e) { }
-          var sel = $("themeSelect");
-          if (sel) sel.value = theme;
-        }
+            $("resetFormBtn").addEventListener("click", function () { resetForm(); });
 
-        var savedTheme = null;
-        try { savedTheme = localStorage.getItem(LS_KEY_THEME); } catch (e) { }
-        if (!savedTheme) savedTheme = "dark";
-        applyTheme(savedTheme);
+            $("deleteBtn").addEventListener("click", function () {
+                if (!selectedId) return;
+                var ok = confirm("선택한 항목을 삭제합니다. (되돌릴 수 없음)");
+                if (!ok) return;
 
-        var themeSel = $("themeSelect");
-        if (themeSel) {
-          themeSel.addEventListener("change", function () {
-            applyTheme(themeSel.value);
-            updateCatSelectStyle();
-          });
-        }
+                var out = [];
+                for (var i = 0; i < items.length; i++) if (items[i].id !== selectedId) out.push(items[i]);
+                items = out;
+                saveItems(items);
 
-        saveCategories(categories);
+                if (selectedItemIds[selectedId]) delete selectedItemIds[selectedId];
 
-        renderCategorySelects();
-        $("catSelect").value = "none";
-        $("catManageSelect").value = "none";
-        refreshCatManageInputsFromSelect();
+                toast("삭제 완료");
+                resetForm();
+                renderList();
+                renderWrongList();
+                updateHeader();
+                refreshQuizPool(false);
+                updateBulkItemUI();
+                renderCategoryCheckboxList();
+            });
 
-        $("quizCatFilter").value = "all";
-        $("catFilterSelect").value = "all";
+            $("searchInput").addEventListener("input", function () { renderList(); });
+            $("sortSelect").addEventListener("change", function () { renderList(); });
+            $("catFilterSelect").addEventListener("change", function () { renderList(); });
 
-        renderList();
-        renderWrongList();
-        renderStats();
-        refreshQuizPool();
-        clearQuizUI();
-        updateHeader();
-        updateCatSelectStyle();
-      }
+            function getSelectedItemIdList() {
+                var out = [];
+                for (var k in selectedItemIds) if (Object.prototype.hasOwnProperty.call(selectedItemIds, k)) out.push(k);
+                return out;
+            }
 
-      init();
-    })();
-  </script>
+            function updateBulkItemUI() {
+                var n = getSelectedItemIdList().length;
+                $("bulkItemCount").textContent = "선택 " + n + "개";
+                $("bulkDeleteItemsBtn").disabled = (n === 0);
+                $("bulkApplyCatBtn").disabled = (n === 0 || !trim($("bulkChangeCatSelect").value));
+
+                var selAll = $("selectAllItems");
+                if (selAll) {
+                    var chks = document.querySelectorAll("#listTbody .rowChk");
+                    if (!chks.length) selAll.checked = false;
+                    else {
+                        var allChecked = true;
+                        for (var i = 0; i < chks.length; i++) if (!chks[i].checked) { allChecked = false; break; }
+                        selAll.checked = allChecked;
+                    }
+                }
+            }
+
+            $("bulkChangeCatSelect").addEventListener("change", function () { updateBulkItemUI(); });
+
+            $("bulkClearSelectionBtn").addEventListener("click", function () {
+                selectedItemIds = {};
+                var chks = document.querySelectorAll("#listTbody .rowChk");
+                for (var i = 0; i < chks.length; i++) chks[i].checked = false;
+                updateBulkItemUI();
+                toast("선택 해제");
+            });
+
+            $("bulkDeleteItemsBtn").addEventListener("click", function () {
+                var ids = getSelectedItemIdList();
+                if (ids.length === 0) return;
+
+                var ok = confirm("선택한 문장 " + ids.length + "개를 삭제합니다. (되돌릴 수 없음)");
+                if (!ok) return;
+
+                var map = {};
+                for (var i = 0; i < ids.length; i++) map[ids[i]] = true;
+
+                var keep = [];
+                for (var j = 0; j < items.length; j++) {
+                    if (!map[items[j].id]) keep.push(items[j]);
+                }
+                items = keep;
+                saveItems(items);
+
+                if (selectedId && map[selectedId]) resetForm();
+
+                selectedItemIds = {};
+                toast("선택 문장 삭제 완료");
+                renderList();
+                renderWrongList();
+                renderStats();
+                refreshQuizPool(false);
+                updateHeader();
+                updateBulkItemUI();
+                renderCategoryCheckboxList();
+            });
+
+            $("bulkApplyCatBtn").addEventListener("click", function () {
+                var ids = getSelectedItemIdList();
+                var newCatId = trim($("bulkChangeCatSelect").value);
+                if (ids.length === 0 || !newCatId) return;
+
+                var ok = confirm("선택한 문장 " + ids.length + "개의 카테고리를 변경합니다.");
+                if (!ok) return;
+
+                var map = {};
+                for (var i = 0; i < ids.length; i++) map[ids[i]] = true;
+
+                var now = Date.now();
+                for (var j = 0; j < items.length; j++) {
+                    if (map[items[j].id]) {
+                        items[j].catId = newCatId;
+                        items[j].updatedAt = now;
+                    }
+                }
+                saveItems(items);
+
+                toast("카테고리 변경 완료");
+                renderList();
+                renderWrongList();
+                refreshQuizPool(false);
+                updateBulkItemUI();
+                renderCategoryCheckboxList();
+            });
+
+            $("selectAllItems").addEventListener("change", function () {
+                var checked = !!this.checked;
+                var chks = document.querySelectorAll("#listTbody .rowChk");
+                for (var i = 0; i < chks.length; i++) {
+                    var id = chks[i].getAttribute("data-id");
+                    chks[i].checked = checked;
+                    if (checked) selectedItemIds[id] = true;
+                    else delete selectedItemIds[id];
+                }
+                updateBulkItemUI();
+            });
+
+            function renderList() {
+                var q = trim($("searchInput").value).toLowerCase();
+                var sort = $("sortSelect").value;
+                var catFilter = String($("catFilterSelect").value || "all");
+
+                var view = items.slice(0);
+
+                if (catFilter !== "all") {
+                    var tmp = [];
+                    for (var i = 0; i < view.length; i++) if (String(view[i].catId) === catFilter) tmp.push(view[i]);
+                    view = tmp;
+                }
+
+                if (q) {
+                    var filtered = [];
+                    for (var k = 0; k < view.length; k++) {
+                        var it = view[k];
+                        var hay = (it.ko + " " + it.en).toLowerCase(); // ✅ 태그 제거
+                        if (hay.indexOf(q) >= 0) filtered.push(it);
+                    }
+                    view = filtered;
+                }
+
+                view.sort(function (a, b) {
+                    if (sort === "updated_desc") return b.updatedAt - a.updatedAt;
+                    if (sort === "created_desc") return b.createdAt - a.createdAt;
+                    if (sort === "wrong_desc") return b.wrong - a.wrong;
+                    return 0;
+                });
+
+                var tbody = $("listTbody");
+                tbody.innerHTML = "";
+
+                for (var i2 = 0; i2 < view.length; i2++) {
+                    (function (it) {
+                        var tr = document.createElement("tr");
+
+                        var tdSel = document.createElement("td");
+                        tdSel.setAttribute("data-label", "선택");
+                        tdSel.innerHTML =
+                            '<input type="checkbox" class="rowChk" data-id="' + escapeHtml(it.id) + '"' +
+                            (selectedItemIds[it.id] ? " checked" : "") + '>';
+                        tr.appendChild(tdSel);
+
+                        var tdCat = document.createElement("td");
+                        tdCat.setAttribute("data-label", "카테고리");
+                        tdCat.innerHTML = catBadgeHtml(it.catId);
+                        tr.appendChild(tdCat);
+
+                        var tdKo = document.createElement("td");
+                        tdKo.setAttribute("data-label", "한국어 뜻");
+                        tdKo.textContent = it.ko;
+                        tr.appendChild(tdKo);
+
+                        var tdEn = document.createElement("td");
+                        tdEn.setAttribute("data-label", "영어 문장");
+                        tdEn.innerHTML = highlightPOS(it.en);
+                        tr.appendChild(tdEn);
+
+                        var tdWrong = document.createElement("td");
+                        tdWrong.setAttribute("data-label", "오답");
+                        tdWrong.innerHTML = '<span class="badge">' + it.wrong + '</span>';
+                        tr.appendChild(tdWrong);
+
+                        tr.addEventListener("click", function (e) {
+                            var tgt = e && e.target ? e.target : null;
+                            if (tgt && tgt.classList && tgt.classList.contains("rowChk")) return;
+
+                            selectedId = it.id;
+                            $("catSelect").value = String(it.catId || "none");
+                            updateCatSelectStyle();
+                            $("koInput").value = it.ko;
+                            $("enInput").value = it.en;
+                            $("deleteBtn").disabled = false;
+
+                            refreshQuizPool(false);
+                            toast("폼에 로드됨");
+                        });
+
+                        var chk = tr.querySelector(".rowChk");
+                        if (chk) {
+                            chk.addEventListener("click", function (e) { e.stopPropagation(); });
+                            chk.addEventListener("change", function () {
+                                var id = this.getAttribute("data-id");
+                                if (this.checked) selectedItemIds[id] = true;
+                                else delete selectedItemIds[id];
+                                updateBulkItemUI();
+                            });
+                        }
+
+                        tbody.appendChild(tr);
+                    })(view[i2]);
+                }
+
+                updateHeader();
+                updateBulkItemUI();
+            }
+
+            var catAddBtn2 = $("catAddBtn2");
+            if (catAddBtn2) {
+                catAddBtn2.addEventListener("click", function () {
+                    var name = trim($("catNameInput2").value);
+                    if (!name) { toast("카테고리 이름이 필요합니다."); return; }
+
+                    for (var i = 0; i < categories.length; i++) {
+                        if (trim(categories[i].name).toLowerCase() === name.toLowerCase()) {
+                            toast("같은 이름의 카테고리가 이미 있습니다.");
+                            return;
+                        }
+                    }
+
+                    var newCat = { id: "cat-" + uuid(), name: name, color: selectedPastel };
+                    categories.push(newCat);
+                    saveCategories(categories);
+
+                    renderCategorySelects();
+                    renderCategoryCheckboxList();
+
+                    $("catNameInput2").value = "";
+                    toast("카테고리 추가");
+                    renderList();
+                    renderWrongList();
+                    refreshQuizPool(false);
+                });
+            }
+
+            var catBulkDeleteBtn2 = $("catBulkDeleteBtn2");
+            if (catBulkDeleteBtn2) {
+                catBulkDeleteBtn2.addEventListener("click", function () {
+                    var ids = getCheckedCategoryIds();
+                    if (ids.length === 0) return;
+
+                    var real = [];
+                    for (var i = 0; i < ids.length; i++) if (ids[i] !== "none") real.push(ids[i]);
+                    if (real.length === 0) { toast("삭제할 카테고리가 없습니다."); return; }
+
+                    var ok = confirm("선택한 카테고리 " + real.length + "개를 삭제합니다.\n해당 카테고리를 쓰던 문장은 '(없음)'으로 전환됩니다.");
+                    if (!ok) return;
+
+                    var keep = [];
+                    for (var c = 0; c < categories.length; c++) {
+                        var cid = String(categories[c].id);
+                        var del = false;
+                        for (var r = 0; r < real.length; r++) if (real[r] === cid) { del = true; break; }
+                        if (!del) keep.push(categories[c]);
+                    }
+                    categories = keep;
+
+                    for (var j = 0; j < items.length; j++) {
+                        for (var r2 = 0; r2 < real.length; r2++) {
+                            if (String(items[j].catId) === real[r2]) { items[j].catId = "none"; break; }
+                        }
+                    }
+
+                    saveCategories(categories);
+                    saveItems(items);
+
+                    renderCategorySelects();
+                    renderCategoryCheckboxList();
+
+                    if (!findCatById($("catSelect").value)) $("catSelect").value = "none";
+                    updateCatSelectStyle();
+
+                    toast("카테고리 삭제 완료");
+                    renderList();
+                    renderWrongList();
+                    refreshQuizPool(false);
+                });
+            }
+
+            var catEditSelect = $("catEditSelect");
+            if (catEditSelect) {
+                catEditSelect.addEventListener("change", function () {
+                    var cid = String(catEditSelect.value || "");
+                    var cat = findCatById(cid);
+                    if (!cat) return;
+
+                    $("catEditNameInput").value = cat.name;
+
+                    // ✅ 공용 팔레트로 동기화
+                    selectedPastel = cat.color || PASTEL_COLORS[0];
+                    renderPastelPalette();
+                });
+            }
+
+            var catUpdateBtn = $("catUpdateBtn");
+            if (catUpdateBtn) {
+                catUpdateBtn.addEventListener("click", function () {
+                    var sel = $("catEditSelect");
+                    if (!sel || !sel.value) { toast("수정할 카테고리가 없습니다."); return; }
+
+                    var cid = String(sel.value);
+                    if (cid === "none") { toast("(없음)은 수정할 수 없습니다."); return; } // 실제로 none은 셀렉트에 안 들어옴
+
+                    var newName = trim($("catEditNameInput").value);
+                    if (!newName) { toast("카테고리 이름이 필요합니다."); return; }
+
+                    for (var i = 0; i < categories.length; i++) {
+                        var c = categories[i];
+                        if (c.id === cid) continue;
+                        if (trim(c.name).toLowerCase() === newName.toLowerCase()) {
+                            toast("같은 이름의 카테고리가 이미 있습니다.");
+                            return;
+                        }
+                    }
+
+                    var cat = findCatById(cid);
+                    if (!cat) { toast("카테고리를 찾지 못했습니다."); return; }
+
+                    cat.name = newName;
+                    cat.color = selectedPastel; // ✅ 공용 팔레트 값 사용
+
+                    saveCategories(categories);
+
+                    renderCategorySelects();
+                    renderCategoryCheckboxList();
+                    renderList();
+                    renderWrongList();
+                    refreshQuizPool(false);
+                    updateCatSelectStyle();
+
+                    // ✅ 선택 유지 + 입력/팔레트 동기화
+                    $("catEditSelect").value = cid;
+                    $("catEditSelect").dispatchEvent(new Event("change"));
+
+                    toast("카테고리 수정 완료");
+                });
+            }
+
+            $("exportBtn").addEventListener("click", function () {
+                var payload = {
+                    version: 2,
+                    exportedAt: Date.now(),
+                    categories: categories,
+                    items: items,
+                    stats: loadStats()
+                };
+                var json = JSON.stringify(payload, null, 2);
+
+                try {
+                    var blob = new Blob([json], { type: "application/json" });
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement("a");
+                    a.href = url;
+                    a.download = "english_sentence_memorizer_backup.json";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.parentNode.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    toast("다운로드 완료");
+                } catch (e) {
+                    var w = window.open();
+                    if (w && w.document) {
+                        w.document.write("<pre>" + escapeHtml(json) + "</pre>");
+                        toast("새 창에 JSON 표시(복사해서 저장)");
+                    } else {
+                        toast("다운로드 실패(팝업 차단)");
+                    }
+                }
+            });
+
+            $("importBtn").addEventListener("click", function () { $("importFile").click(); });
+
+            $("importFile").addEventListener("change", function (e) {
+                var file = (e.target.files && e.target.files[0]) ? e.target.files[0] : null;
+                if (!file) return;
+
+                var ok = confirm("불러오기를 하면 현재 데이터가 모두 사라지고, 불러온 데이터로 덮어씁니다. 계속할까요?");
+                if (!ok) { $("importFile").value = ""; return; }
+
+                var reader = new FileReader();
+                reader.onload = function () {
+                    try {
+                        var data = JSON.parse(String(reader.result || "{}"));
+                        if (!data || !data.items || !data.categories) {
+                            toast("불러오기 실패(형식 오류)");
+                            return;
+                        }
+
+                        var incomingCats = [];
+                        var hasNone = false;
+                        for (var j = 0; j < data.categories.length; j++) {
+                            var c = data.categories[j] || {};
+                            var id = String((c.id != null) ? c.id : ("cat-" + uuid()));
+                            var name = trim((c.name != null) ? c.name : "카테고리");
+                            if (!name) name = "카테고리";
+                            var color = normalizeHexColor(c.color) || "#2563eb";
+                            if (id === "none") hasNone = true;
+                            incomingCats.push({ id: id, name: name, color: color });
+                        }
+                        if (!hasNone) incomingCats.unshift({ id: "none", name: "(없음)", color: "#9ca3af" });
+
+                        incomingCats = (function (arr) {
+                            var noneObj = null;
+                            var rest = [];
+                            for (var k = 0; k < arr.length; k++) {
+                                if (String(arr[k].id) === "none") noneObj = arr[k];
+                                else rest.push(arr[k]);
+                            }
+                            if (!noneObj) noneObj = { id: "none", name: "(없음)", color: "#9ca3af" };
+                            return [noneObj].concat(rest);
+                        })(incomingCats);
+
+                        var catIdMap = {};
+                        for (var cc = 0; cc < incomingCats.length; cc++) catIdMap[incomingCats[cc].id] = true;
+
+                        var incomingItems = [];
+                        for (var jj = 0; jj < data.items.length; jj++) {
+                            var x = data.items[jj] || {};
+                            var now = Date.now();
+                            var it = {
+                                id: String((x.id != null) ? x.id : uuid()),
+                                catId: String((x.catId != null) ? x.catId : "none"),
+                                ko: trim((x.ko != null) ? x.ko : ""),
+                                en: trim((x.en != null) ? x.en : ""),
+                                tags: normalizeTags(x.tags), // 호환용
+                                createdAt: Number((x.createdAt != null) ? x.createdAt : now),
+                                updatedAt: Number((x.updatedAt != null) ? x.updatedAt : now),
+                                wrong: clampInt((x.wrong != null) ? x.wrong : 0, 0, 1000000000),
+                                correct: clampInt((x.correct != null) ? x.correct : 0, 0, 1000000000),
+                                attempts: clampInt((x.attempts != null) ? x.attempts : 0, 0, 1000000000)
+                            };
+                            if (!catIdMap[it.catId]) it.catId = "none";
+                            incomingItems.push(it);
+                        }
+
+                        var incomingStats = { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
+                        if (data.stats) {
+                            incomingStats = {
+                                attempts: clampInt((data.stats.attempts != null) ? data.stats.attempts : 0, 0, 1000000000),
+                                correct: clampInt((data.stats.correct != null) ? data.stats.correct : 0, 0, 1000000000),
+                                streak: clampInt((data.stats.streak != null) ? data.stats.streak : 0, 0, 1000000000),
+                                bestStreak: clampInt((data.stats.bestStreak != null) ? data.stats.bestStreak : 0, 0, 1000000000)
+                            };
+                        }
+
+                        categories = incomingCats;
+                        items = incomingItems;
+                        saveCategories(categories);
+                        saveItems(items);
+                        saveStats(incomingStats);
+
+                        selectedId = null;
+                        selectedItemIds = {};
+                        quizPool = [];
+                        quizIndex = 0;
+                        currentItem = null;
+
+                        toast("불러오기 완료(덮어쓰기)");
+                        renderCategorySelects();
+
+                        resetForm();
+                        renderList();
+                        renderWrongList();
+                        renderStats();
+                        refreshQuizPool(true);
+                        clearQuizUI();
+                        updateHeader();
+                        updateCatSelectStyle();
+                        updateBulkItemUI();
+                        renderPastelPalette();
+                        renderCategoryCheckboxList();
+                        fillCatEditSelect();
+
+                    } catch (err) {
+                        toast("불러오기 실패");
+                    } finally {
+                        $("importFile").value = "";
+                    }
+                };
+                reader.onerror = function () { toast("불러오기 실패"); $("importFile").value = ""; };
+                reader.readAsText(file);
+            });
+
+            $("wipeBtn").addEventListener("click", function () {
+                var ok = confirm("전체 초기화합니다. (문장/통계/카테고리 모두 삭제)");
+                if (!ok) return;
+                localStorage.removeItem(LS_KEY_ITEMS);
+                localStorage.removeItem(LS_KEY_STATS);
+                localStorage.removeItem(LS_KEY_CATS);
+
+                categories = defaultCategories();
+                saveCategories(categories);
+
+                items = [];
+                selectedItemIds = {};
+                resetForm();
+                toast("초기화 완료");
+                renderCategorySelects();
+                renderList();
+                renderWrongList();
+                renderStats();
+                refreshQuizPool(true);
+                updateHeader();
+                updateBulkItemUI();
+                renderCategoryCheckboxList();
+            });
+
+            $("modeSelect").addEventListener("change", function () { refreshQuizPool(true); });
+            $("quizCatFilter").addEventListener("change", function () { refreshQuizPool(true); });
+
+            $("startQuizBtn").addEventListener("click", function () {
+                if (!quizPool.length) refreshQuizPool(true);
+                if (!currentItem) { nextQuestion(); return; }
+                nextQuestion();
+            });
+
+            $("shuffleBtn").addEventListener("click", function () {
+                refreshQuizPool(true);
+                shuffle(quizPool);
+                toast("재시작");
+            });
+
+            $("submitBtn").addEventListener("click", function () { grade(); });
+
+            $("skipBtn").addEventListener("click", function () { nextQuestion(); });
+
+            $("revealBtn").addEventListener("click", function () { revealAnswer(); });
+
+            $("copyAnswerBtn").addEventListener("click", function () {
+                if (!currentItem) return;
+                var text = currentItem.en;
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(text).then(function () { toast("정답 복사 완료"); }, function () { toast("복사 실패"); });
+                    } else {
+                        fallbackCopy(text);
+                    }
+                } catch (e) { fallbackCopy(text); }
+            });
+
+            function fallbackCopy(text) {
+                try {
+                    var ta = document.createElement("textarea");
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(ta);
+                    toast("정답 복사 완료");
+                } catch (e) { toast("복사 실패"); }
+            }
+
+            $("answerInput").addEventListener("keydown", function (e) {
+                if (e.ctrlKey && e.keyCode === 13) {
+                    e.preventDefault();
+                    if (!$("submitBtn").disabled) grade();
+                }
+            });
+
+            function refreshQuizPool(resetProgress) {
+                quizMode = $("modeSelect").value;
+                var catFilter = String($("quizCatFilter").value || "all");
+
+                var pool = [];
+                for (var i = 0; i < items.length; i++) {
+                    var it = items[i];
+                    if (quizMode === "wrongbook" && !(it.wrong > 0)) continue;
+                    if (catFilter !== "all" && String(it.catId) !== catFilter) continue;
+                    pool.push(it);
+                }
+
+                quizPool = pool;
+                if (quizMode === "random") shuffle(quizPool);
+                if (quizMode === "wrongbook") quizPool.sort(function (a, b) { return b.wrong - a.wrong; });
+
+                if (resetProgress) {
+                    for (var x = 0; x < items.length; x++) delete items[x]._lastResult;
+                    quizIndex = 0;
+                    currentItem = null;
+                    clearQuizUI();
+                }
+
+                $("poolCount").textContent = String(quizPool.length);
+                updateQuizProgress();
+            }
+
+            function updateQuizProgress() {
+                var total = quizPool.length;
+                var cur = currentItem ? Math.max(quizIndex, 1) : 0;
+                $("quizProgress").textContent = String(cur) + " / " + String(total);
+            }
+
+            function clearQuizUI() {
+                $("koPrompt").textContent = "-";
+                $("answerInput").value = "";
+                $("submitBtn").disabled = true;
+                $("skipBtn").disabled = (quizPool.length === 0);
+                $("revealBtn").disabled = true;
+                $("copyAnswerBtn").disabled = true;
+                $("resultArea").style.display = "none";
+                updateQuizProgress();
+            }
+
+            function nextQuestion() {
+                if (quizPool.length === 0) { toast("문항이 없습니다."); clearQuizUI(); return; }
+
+                if (quizIndex >= quizPool.length) {
+                    showFinalOverlay();
+                    return;
+                }
+
+                currentItem = quizPool[quizIndex];
+                quizIndex++;
+
+                $("koPrompt").textContent = currentItem.ko;
+                $("answerInput").value = "";
+                $("submitBtn").disabled = false;
+                $("skipBtn").disabled = false;
+                $("revealBtn").disabled = false;
+                $("copyAnswerBtn").disabled = true;
+
+                $("resultArea").style.display = "none";
+                updateQuizProgress();
+            }
+
+            function revealAnswer() {
+                if (!currentItem) return;
+                $("resultArea").style.display = "";
+                $("resultBadge").textContent = "정답 공개(채점 아님)";
+                $("scoreText").textContent = "";
+                $("answerArea").textContent = currentItem.en;
+
+                var c = getCatById(currentItem.catId);
+                $("itemMeta").textContent =
+                    "카테고리: " + c.name + " · updated: " + fmtDate(currentItem.updatedAt);
+
+                $("copyAnswerBtn").disabled = false;
+            }
+
+            function normalizeEn(s) {
+                var x = String(s || "").toLowerCase();
+
+                x = x.replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
+
+                x = x.replace(/\b(i)\s*'\s*m\b/g, "$1 am");
+                x = x.replace(/\b(can)\s*'\s*t\b/g, "$1not");
+                x = x.replace(/\b(do)\s*'\s*n't\b/g, "$1 not");
+                x = x.replace(/\b(will)\s*'\s*n't\b/g, "$1 not");
+
+                x = x.replace(/\b(it|that|there|here|he|she|who|what|where)\s*'\s*s\b/g, "$1 is");
+                x = x.replace(/\bcan not\b/g, "cannot");
+
+                x = x.replace(/[^a-z0-9\s]/g, " ");
+                x = x.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+                return x;
+            }
+
+            function tokenizeForDiff(s) {
+                var x = normalizeEn(s);
+                if (!x) return [];
+                return x.split(" ");
+            }
+
+            function lcsMatrix(a, b) {
+                var n = a.length, m = b.length;
+                var dp = [];
+                for (var i = 0; i <= n; i++) {
+                    dp[i] = [];
+                    for (var j = 0; j <= m; j++) dp[i][j] = 0;
+                }
+                for (var ii = 1; ii <= n; ii++) {
+                    for (var jj = 1; jj <= m; jj++) {
+                        dp[ii][jj] = (a[ii - 1] === b[jj - 1]) ? (dp[ii - 1][jj - 1] + 1) : Math.max(dp[ii - 1][jj], dp[ii][jj - 1]);
+                    }
+                }
+                return dp;
+            }
+
+            function lcsMatchedInputIndexes(a, b) {
+                var dp = lcsMatrix(a, b);
+                var i = a.length, j = b.length;
+                var matched = {};
+                while (i > 0 && j > 0) {
+                    if (a[i - 1] === b[j - 1]) {
+                        matched[i - 1] = true;
+                        i--; j--;
+                    } else {
+                        if (dp[i - 1][j] >= dp[i][j - 1]) i--;
+                        else j--;
+                    }
+                }
+                return matched;
+            }
+
+            function buildMarkedInputHtml(input, expected) {
+                var a = tokenizeForDiff(input);
+                var b = tokenizeForDiff(expected);
+
+                if (a.length === 0) return '<div class="muted">입력이 비어있습니다.</div>';
+
+                var matched = lcsMatchedInputIndexes(a, b);
+                var parts = [];
+                for (var i = 0; i < a.length; i++) {
+                    var w = a[i];
+                    var cls = matched[i] ? "good" : "bad";
+                    parts.push('<span class="' + cls + '">' + escapeHtml(w) + '</span>');
+                }
+                return '<div class="mono" style="white-space:normal; line-height:1.9;">' + parts.join(" ") + '</div>';
+            }
+
+            function grade() {
+                if (!currentItem) return;
+
+                var input = trim($("answerInput").value);
+                if (!input) { toast("입력이 비어있습니다."); return; }
+
+                var expected = currentItem.en;
+
+                var normInput = normalizeEn(input);
+                var normExpected = normalizeEn(expected);
+
+                var isCorrect = (normInput === normExpected);
+
+                var stats = loadStats();
+                stats.attempts += 1;
+                currentItem.attempts += 1;
+
+                if (isCorrect) {
+                    stats.correct += 1;
+                    stats.streak += 1;
+                    if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
+                    currentItem.correct += 1;
+                } else {
+                    stats.streak = 0;
+                    currentItem.wrong += 1;
+                }
+
+                saveStats(stats);
+
+                var idx = -1;
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].id === currentItem.id) { idx = i; break; }
+                }
+                if (idx >= 0) items[idx] = currentItem;
+                saveItems(items);
+
+                $("resultArea").style.display = "";
+
+                var emoji = isCorrect ? "⭕" : "❌";
+                $("resultBadge").textContent = (isCorrect ? (emoji + " 정답") : (emoji + " 오답"));
+                $("resultBadge").style.background = isCorrect ? "#16a34a20" : "#ef444420";
+                $("resultBadge").style.borderColor = isCorrect ? "#22c55e55" : "#ef444455";
+
+                $("myAnswerArea").innerHTML = buildMarkedInputHtml(input, expected);
+                $("answerArea").textContent = expected;
+
+                var c = getCatById(currentItem.catId);
+                $("itemMeta").textContent =
+                    "카테고리: " + c.name + " · updated: " + fmtDate(currentItem.updatedAt);
+
+                $("copyAnswerBtn").disabled = false;
+
+                renderList();
+                renderWrongList();
+                renderStats();
+                updateHeader();
+                renderCategoryCheckboxList();
+
+                toast(isCorrect ? "정답" : "오답");
+
+                currentItem._lastResult = isCorrect;
+            }
+
+            function shuffle(arr) {
+                for (var i = arr.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+                }
+            }
+
+            $("clearWrongBtn").addEventListener("click", function () {
+                var ok = confirm("오답 카운트를 전체 초기화합니다. (문장은 유지)");
+                if (!ok) return;
+                for (var i = 0; i < items.length; i++) items[i].wrong = 0;
+                saveItems(items);
+                toast("오답 초기화 완료");
+                renderWrongList();
+                renderList();
+                refreshQuizPool(false);
+                renderCategoryCheckboxList();
+            });
+
+            function renderWrongList() {
+                var view = [];
+                for (var i = 0; i < items.length; i++) if (items[i].wrong > 0) view.push(items[i]);
+                view.sort(function (a, b) { return b.wrong - a.wrong; });
+
+                var tbody = $("wrongTbody");
+                tbody.innerHTML = "";
+
+                for (var k = 0; k < view.length; k++) {
+                    (function (it) {
+                        var tr = document.createElement("tr");
+
+                        var tdWrong = document.createElement("td");
+                        tdWrong.setAttribute("data-label", "오답");
+                        tdWrong.innerHTML = "<span class='badge'>" + it.wrong + "</span>";
+                        tr.appendChild(tdWrong);
+
+                        var tdCat = document.createElement("td");
+                        tdCat.setAttribute("data-label", "카테고리");
+                        tdCat.innerHTML = catBadgeHtml(it.catId);
+                        tr.appendChild(tdCat);
+
+                        var tdKo = document.createElement("td");
+                        tdKo.setAttribute("data-label", "한국어 뜻");
+                        tdKo.textContent = it.ko;
+                        tr.appendChild(tdKo);
+
+                        var tdEn = document.createElement("td");
+                        tdEn.setAttribute("data-label", "영어 문장");
+                        tdEn.innerHTML = highlightPOS(it.en);
+                        tr.appendChild(tdEn);
+
+                        tr.addEventListener("click", function () {
+                            setTab("manage");
+                            selectedId = it.id;
+                            $("catSelect").value = String(it.catId || "none");
+                            updateCatSelectStyle();
+                            $("koInput").value = it.ko;
+                            $("enInput").value = it.en;
+                            $("deleteBtn").disabled = false;
+                            renderList();
+                            toast("폼에 로드됨");
+                        });
+
+                        tbody.appendChild(tr);
+                    })(view[k]);
+                }
+            }
+
+            function renderStats() {
+                var stats = loadStats();
+                $("statTotal").textContent = String(items.length);
+                $("statAttempts").textContent = String(stats.attempts);
+                $("statCorrect").textContent = String(stats.correct);
+                var acc = stats.attempts ? Math.round((stats.correct / stats.attempts) * 100) : 0;
+                $("statAcc").textContent = String(acc) + "%";
+                $("statStreak").textContent = String(stats.streak);
+                $("statBestStreak").textContent = String(stats.bestStreak);
+                renderWrongList();
+                updateHeader();
+            }
+
+            function showFinalOverlay() {
+                var total = quizPool.length;
+                var correct = 0;
+                var wrongItems = [];
+
+                for (var i = 0; i < quizPool.length; i++) {
+                    var it = quizPool[i];
+                    if (it._lastResult === true) correct++;
+                    else if (it._lastResult === false) wrongItems.push(it);
+                }
+
+                var percent = total ? Math.round((correct / total) * 100) : 0;
+                var score = percent;
+
+                $("finalScore").textContent = String(score);
+                $("finalPercent").textContent = String(percent) + "%";
+                $("finalCorrect").textContent = String(correct);
+                $("finalTotal").textContent = String(total);
+                $("overlaySub").textContent = "모드: " + quizMode + " · " + (new Date().toLocaleString());
+
+                var list = $("wrongList");
+                list.innerHTML = "";
+                if (!wrongItems.length) {
+                    list.innerHTML = '<div class="muted">틀린 문장이 없습니다.</div>';
+                } else {
+                    for (var k = 0; k < wrongItems.length; k++) {
+                        var it2 = wrongItems[k];
+                        var div = document.createElement("div");
+                        div.className = "wrongItem";
+                        div.innerHTML =
+                            '<div class="ko">' + escapeHtml(it2.ko) + '</div>' +
+                            '<div class="row"><div class="label">정답</div><div class="val ans mono">' + escapeHtml(it2.en) + '</div></div>';
+                        list.appendChild(div);
+                    }
+                }
+
+                $("quizResultOverlay").style.display = "flex";
+            }
+
+            $("exitResultBtn").addEventListener("click", function () {
+                $("quizResultOverlay").style.display = "none";
+                setTab("quiz");
+                refreshQuizPool(true);
+                clearQuizUI();
+            });
+
+            function updateHeader() {
+                $("headerCount").textContent = "문장 " + items.length + "개";
+                var stats = loadStats();
+                $("headerStreak").textContent = "연속 정답 " + stats.streak;
+            }
+
+            function init() {
+                function applyTheme(theme) {
+                    theme = theme || "dark";
+                    if (theme !== "light" && theme !== "dark") theme = "dark";
+                    document.documentElement.setAttribute("data-theme", theme);
+                    try { localStorage.setItem(LS_KEY_THEME, theme); } catch (e) { }
+                    var sel = $("themeSelect");
+                    if (sel) sel.value = theme;
+                }
+
+                var savedTheme = null;
+                try { savedTheme = localStorage.getItem(LS_KEY_THEME); } catch (e) { }
+                if (!savedTheme) savedTheme = "dark";
+                applyTheme(savedTheme);
+
+                var themeSel = $("themeSelect");
+                if (themeSel) {
+                    themeSel.addEventListener("change", function () {
+                        applyTheme(themeSel.value);
+                        updateCatSelectStyle();
+                    });
+                }
+
+                saveCategories(categories);
+
+                renderCategorySelects();
+                $("catSelect").value = "none";
+
+                $("catSelect").addEventListener("change", function () {
+                    updateCatSelectStyle();
+                });
+
+                $("quizCatFilter").value = "all";
+                $("catFilterSelect").value = "all";
+
+                renderPastelPalette();
+
+                renderList();
+                renderWrongList();
+                renderStats();
+                refreshQuizPool(true);
+                clearQuizUI();
+                updateHeader();
+                updateCatSelectStyle();
+                updateBulkItemUI();
+                renderCategoryCheckboxList();
+                fillCatEditSelect();
+            }
+
+            init();
+        })();
+    </script>
 </body>
 </html>
