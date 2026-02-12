@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/compromise@14.10.0/builds/compromise.min.js"></script>
 
     <script>
+        /* 테마를 먼저 적용해서 화면 깜빡임을 줄인다 */
         try {
             var t = localStorage.getItem("sentence_memorizer_theme_v1");
             if (t !== "light" && t !== "dark") t = "dark";
@@ -47,6 +48,7 @@
         }
 
         :root {
+            font-size: 18px;
             font-family: "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
             --bg: #0b1020;
             --card: #0f172a;
@@ -197,6 +199,23 @@
         .muted {
             color: var(--muted);
             font-size: 12px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .help {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-top: 10px;
+        }
+
+        .btnrow + .help {
+            margin-top: 12px;
+        }
+
+        .btnrow + .muted {
+            margin-top: 12px;
         }
 
         label {
@@ -212,10 +231,10 @@
             border: 1px solid var(--line);
             border-radius: 12px;
             padding: 10px 12px;
-            font-size: 14px;
             outline: none;
             background: var(--control-bg);
             color: var(--ink);
+            font-size: 18px;
         }
 
         input, textarea, select, button {
@@ -229,6 +248,9 @@
         textarea {
             min-height: 88px;
             resize: vertical;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+            line-height: 1.5;
         }
 
             input[type="text"]:focus, textarea:focus, select:focus {
@@ -237,12 +259,13 @@
             }
 
         .btnrow {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-            align-items: center;
+            margin-top: 14px;
+            margin-bottom: 10px;
         }
+
+            .btnrow.tight {
+                margin-top: 10px;
+            }
 
         button {
             border: 1px solid var(--line);
@@ -252,6 +275,7 @@
             cursor: pointer;
             font-weight: 800;
             color: var(--ink);
+            font-size: 18px;
         }
 
             button.primary {
@@ -289,7 +313,7 @@
         .hr {
             height: 1px;
             background: var(--line);
-            margin: 12px 0;
+            margin: 16px 0;
         }
 
         .tablewrap {
@@ -301,7 +325,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 16px;
             background: var(--card);
             table-layout: auto;
             min-width: 900px;
@@ -483,12 +507,6 @@
                 }
         }
 
-        textarea, input[type="text"] {
-            word-break: keep-all;
-            overflow-wrap: break-word;
-            line-height: 1.5;
-        }
-
         .overlay {
             position: fixed;
             inset: 0;
@@ -637,8 +655,8 @@
             <span id="headerStreak" class="pill">연속 정답 0</span>
 
             <select id="themeSelect" class="pill" style="padding:6px 10px;">
-                <option value="dark" selected>다크</option>
-                <option value="light">라이트</option>
+                <option value="dark" selected>다크 모드</option>
+                <option value="light">라이트 모드</option>
             </select>
         </div>
     </header>
@@ -647,27 +665,27 @@
         <div class="tabs">
             <button class="tabbtn active" data-tab="manage">문장 관리</button>
             <button class="tabbtn" data-tab="quiz">퀴즈</button>
-            <button class="tabbtn" data-tab="stats">통계/오답노트</button>
+            <button class="tabbtn" data-tab="stats">오답노트</button>
         </div>
 
         <section id="tab-manage" class="grid two">
             <div class="card">
-                <h2>문장 추가 / 수정</h2>
+                <h2>문장 추가 수정</h2>
 
                 <label>카테고리</label>
                 <select id="catSelect"></select>
 
-                <label>한국어 뜻(문제)</label>
+                <label>한국어 뜻 문제</label>
                 <textarea id="koInput" placeholder="예) 나는 오늘 너무 피곤하다"></textarea>
 
-                <label>영어 문장(정답)</label>
+                <label>영어 문장 정답</label>
                 <textarea id="enInput" placeholder="예) I am very tired today."
                           spellcheck="true" lang="en" autocomplete="off" autocapitalize="off"></textarea>
 
                 <div class="btnrow">
                     <button class="primary" id="saveBtn">저장</button>
-                    <button id="resetFormBtn">폼 초기화</button>
-                    <button class="danger" id="deleteBtn" disabled>현재 선택 문장 삭제</button>
+                    <button id="resetFormBtn">초기화</button>
+                    <button class="danger" id="deleteBtn" disabled>현재 선택한 문장 삭제</button>
                 </div>
 
                 <div class="hr"></div>
@@ -683,7 +701,7 @@
 
                 <div class="hr"></div>
 
-                <h2>카테고리 수정/추가</h2>
+                <h2>카테고리 수정 추가</h2>
 
                 <label>수정할 카테고리</label>
                 <select id="catEditSelect"></select>
@@ -693,7 +711,7 @@
 
                 <label>색상</label>
                 <div id="pastelPalette" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
-                <div class="muted small" style="margin-top:6px;">색상 선택 후 아래 버튼으로 수정/추가</div>
+                <div class="help small">색상 선택 후 아래 버튼으로 수정 적용</div>
 
                 <div class="btnrow" style="margin-top:10px;">
                     <button class="primary" id="catUpdateBtn">수정 적용</button>
@@ -709,7 +727,7 @@
                 </div>
 
                 <div class="muted" style="margin-top:8px;">
-                    삭제 시 해당 카테고리를 쓰던 문장들은 없음으로 전환됩니다.
+                    삭제 시 해당 카테고리를 쓰던 문장들은 없음으로 전환됩니다
                 </div>
 
                 <div class="hr"></div>
@@ -717,13 +735,13 @@
                 <h2>데이터</h2>
                 <div class="btnrow">
                     <button id="exportBtn">데이터 다운로드</button>
-                    <button id="importBtn">데이터 불러오기(덮어쓰기)</button>
+                    <button id="importBtn">데이터 불러오기/덮어쓰기</button>
                     <button class="danger" id="wipeBtn">전체 초기화</button>
                 </div>
                 <input id="importFile" type="file" accept="application/json" style="display:none" />
                 <div class="muted">
-                    다운로드한 데이터를 불러오면 다른 기기에서도 이어서 사용할 수 있습니다.
-                    (불러오기는 현재 데이터를 모두 지우고 덮어씁니다)
+                    다운로드한 데이터를 불러오면 다른 기기에서도 이어서 사용할 수 있습니다
+                    불러오기는 현재 데이터를 모두 지우고 덮어씁니다
                 </div>
             </div>
 
@@ -733,7 +751,7 @@
                 <div class="split">
                     <div>
                         <label>검색</label>
-                        <input id="searchInput" type="text" placeholder="한국어/영어 검색" />
+                        <input id="searchInput" type="text" placeholder="한국어 영어 검색" />
                     </div>
                     <div>
                         <label>카테고리 필터</label>
@@ -754,7 +772,7 @@
                     <button class="danger" id="bulkDeleteItemsBtn" disabled>선택 문장 삭제</button>
 
                     <select id="bulkChangeCatSelect" style="max-width:260px;">
-                        <option value="">카테고리 변경...</option>
+                        <option value="">카테고리 변경</option>
                     </select>
                     <button id="bulkApplyCatBtn" disabled>적용</button>
 
@@ -779,7 +797,7 @@
                 </div>
 
                 <div class="muted" style="margin-top:10px;">
-                    행을 클릭하면 폼에 로드됩니다. (다중 작업은 체크박스로 선택 후 버튼)
+                    문장을 선택하면 폼에 로드됩니다
                 </div>
             </div>
         </section>
@@ -794,7 +812,7 @@
                         <select id="modeSelect">
                             <option value="random" selected>랜덤</option>
                             <option value="sequential">순서대로</option>
-                            <option value="wrongbook">오답노트(오답 있는 문장만)</option>
+                            <option value="wrongbook">오답 문장</option>
                         </select>
                     </div>
                     <div>
@@ -805,7 +823,7 @@
 
                 <div class="split">
                     <div>
-                        <label>문제 수(현재 필터 기준)</label>
+                        <label>문제 수 현재 필터 기준</label>
                         <div class="kpi">
                             <div class="box">
                                 <div class="muted">가능 문항</div>
@@ -817,17 +835,23 @@
                             </div>
                         </div>
                     </div>
+
+                    <div>
+                        <label>출제 개수 0이면 전체</label>
+                        <input id="quizCountInput" type="text" value="0" placeholder="예) 20" />
+                        <div class="help small">필터에 해당하는 문장 중 N개만 출제</div>
+                    </div>
                 </div>
 
                 <div class="btnrow">
-                    <button class="primary" id="startQuizBtn">퀴즈 시작/다음</button>
+                    <button class="primary" id="startQuizBtn">퀴즈 시작 다음</button>
                     <button id="revealBtn" disabled>정답 보기</button>
-                    <button id="shuffleBtn">재시작(섞기)</button>
+                    <button id="shuffleBtn">재시작 섞기</button>
                 </div>
 
                 <div class="hr"></div>
                 <div class="muted">
-                    입력 후 <span class="mono">Ctrl+Enter</span>로 제출 가능
+                    입력 후 Ctrl Enter로 제출 가능
                 </div>
             </div>
 
@@ -842,7 +866,7 @@
                           spellcheck="true" lang="en" autocomplete="off" autocapitalize="off"></textarea>
 
                 <div class="btnrow">
-                    <button class="primary" id="submitBtn" disabled>제출/채점</button>
+                    <button class="primary" id="submitBtn" disabled>제출 채점</button>
                     <button id="skipBtn" disabled>건너뛰기</button>
                     <button id="copyAnswerBtn" disabled>정답 복사</button>
                 </div>
@@ -907,8 +931,8 @@
             </div>
 
             <div class="card">
-                <h2>오답노트(오답 있는 문장)</h2>
-                <div class="muted">오답이 누적된 항목부터 보입니다. 클릭하면 관리 폼으로 불러옵니다.</div>
+                <h2>오답노트 오답 있는 문장</h2>
+                <div class="muted">오답이 누적된 항목부터 보입니다 클릭하면 관리 폼으로 불러옵니다</div>
 
                 <div class="tablewrap" style="margin-top:12px; max-height:560px;">
                     <table>
@@ -925,7 +949,7 @@
                 </div>
 
                 <div class="btnrow">
-                    <button id="clearWrongBtn" class="danger">오답 카운트 초기화(전체)</button>
+                    <button id="clearWrongBtn" class="danger">오답 카운트 초기화 전체</button>
                 </div>
             </div>
         </section>
@@ -942,7 +966,7 @@
 
                 <div class="scoreGrid">
                     <div class="scoreBox">
-                        <div class="muted">점수(100점 만점)</div>
+                        <div class="muted">점수 100점 만점</div>
                         <div class="scoreNum" id="finalScore">0</div>
                     </div>
                     <div class="scoreBox">
@@ -957,12 +981,24 @@
                         <div class="muted">총 문제</div>
                         <div class="scoreNum" id="finalTotal">0</div>
                     </div>
+                    <div class="scoreBox">
+                        <div class="muted">틀린 개수</div>
+                        <div class="scoreNum" id="finalWrong">0</div>
+                    </div>
+                    <div class="scoreBox">
+                        <div class="muted">오답률</div>
+                        <div class="scoreNum" id="finalWrongPercent">0%</div>
+                    </div>
+                    <div class="scoreBox">
+                        <div class="muted">등급</div>
+                        <div class="scoreNum" id="finalGrade">F</div>
+                    </div>
                 </div>
 
                 <div class="hr"></div>
 
                 <div class="overlayTitle2">틀린 문장</div>
-                <div class="muted" style="margin-top:6px;">클릭 복사 같은 기능 원하면 그때 추가 가능</div>
+                <div class="muted" style="margin-top:6px;">원하면 클릭 복사 같은 기능도 추가할 수 있습니다</div>
 
                 <div id="wrongList" class="wrongList"></div>
             </div>
@@ -975,6 +1011,7 @@
         (function () {
             "use strict";
 
+            /* 고유 아이디 생성 */
             function uuid() {
                 try {
                     if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
@@ -992,11 +1029,14 @@
                 return "id-" + (new Date().getTime()) + "-" + Math.floor(Math.random() * 1e9);
             }
 
+            /* 로컬스토리지 키 */
             var LS_KEY_ITEMS = "sentence_memorizer_items_v2_compat";
             var LS_KEY_STATS = "sentence_memorizer_stats_v2_compat";
             var LS_KEY_CATS = "sentence_memorizer_categories_v2_compat";
             var LS_KEY_THEME = "sentence_memorizer_theme_v1";
 
+            /* 기본 유틸 */
+            function $(id) { return document.getElementById(id); }
             function trim(s) { return String(s || "").replace(/^\s+|\s+$/g, ""); }
 
             function clampInt(v, min, max) {
@@ -1008,7 +1048,6 @@
                 return n;
             }
 
-            // (태그 UI는 삭제했지만, 기존 저장 데이터 호환을 위해 유지)
             function normalizeTags(tags) {
                 var out = [];
                 if (!tags) return out;
@@ -1072,14 +1111,207 @@
                 }
             }
 
-            function $(id) { return document.getElementById(id); }
+            /* 토스트 메시지 */
+            function toast(msg) {
+                var t = $("toast");
+                t.textContent = msg;
+                t.className = "toast show";
+                setTimeout(function () { t.className = "toast"; }, 1200);
+            }
 
+            /* 기본 카테고리 */
+            function defaultCategories() {
+                return [
+                    { id: "none", name: "(없음)", color: "#9ca3af" },
+                    { id: "cat-" + uuid(), name: "일상", color: "#2563eb" },
+                    { id: "cat-" + uuid(), name: "여행", color: "#7c3aed" }
+                ];
+            }
+
+            /* 카테고리 로드
+               항상 none을 포함하도록 보정한다
+            */
+            function loadCategories() {
+                try {
+                    var raw = localStorage.getItem(LS_KEY_CATS);
+                    var arr = raw ? JSON.parse(raw) : null;
+                    if (!arr || !arr.length) return defaultCategories();
+
+                    var out = [];
+                    var hasNone = false;
+
+                    for (var i = 0; i < arr.length; i++) {
+                        var c = arr[i] || {};
+                        var id = String((c.id != null) ? c.id : ("cat-" + uuid()));
+                        var name = trim((c.name != null) ? c.name : "카테고리");
+                        if (!name) name = "카테고리";
+                        var color = normalizeHexColor(c.color) || "#2563eb";
+                        if (id === "none") hasNone = true;
+                        out.push({ id: id, name: name, color: color });
+                    }
+
+                    if (!hasNone) out.unshift({ id: "none", name: "(없음)", color: "#9ca3af" });
+
+                    /* none을 항상 첫번째로 둔다 */
+                    var finalArr = [];
+                    var noneObj = null;
+                    for (var j = 0; j < out.length; j++) {
+                        if (String(out[j].id) === "none") { noneObj = out[j]; break; }
+                    }
+                    if (!noneObj) noneObj = { id: "none", name: "(없음)", color: "#9ca3af" };
+                    finalArr.push(noneObj);
+                    for (var k = 0; k < out.length; k++) if (String(out[k].id) !== "none") finalArr.push(out[k]);
+
+                    /* 혹시라도 비어있을 경우를 막는다 */
+                    if (!finalArr.length) return defaultCategories();
+                    return finalArr;
+                } catch (e) {
+                    return defaultCategories();
+                }
+            }
+
+            function saveCategories(cats) { localStorage.setItem(LS_KEY_CATS, JSON.stringify(cats)); }
+
+            /* 문장 로드 */
+            function loadItems() {
+                try {
+                    var raw = localStorage.getItem(LS_KEY_ITEMS);
+                    if (!raw) return [];
+                    var arr = JSON.parse(raw);
+                    if (!arr || !arr.length) return [];
+                    var out = [];
+                    for (var i = 0; i < arr.length; i++) {
+                        var x = arr[i] || {};
+                        var now = Date.now();
+                        out.push({
+                            id: String((x.id != null) ? x.id : uuid()),
+                            catId: String((x.catId != null) ? x.catId : "none"),
+                            ko: String((x.ko != null) ? x.ko : ""),
+                            en: String((x.en != null) ? x.en : ""),
+                            tags: normalizeTags(x.tags),
+                            createdAt: Number((x.createdAt != null) ? x.createdAt : now),
+                            updatedAt: Number((x.updatedAt != null) ? x.updatedAt : now),
+                            wrong: clampInt((x.wrong != null) ? x.wrong : 0, 0, 1000000000),
+                            correct: clampInt((x.correct != null) ? x.correct : 0, 0, 1000000000),
+                            attempts: clampInt((x.attempts != null) ? x.attempts : 0, 0, 1000000000)
+                        });
+                    }
+                    return out;
+                } catch (e) { return []; }
+            }
+
+            function saveItems(items) { localStorage.setItem(LS_KEY_ITEMS, JSON.stringify(items)); }
+
+            /* 통계 로드 */
+            function loadStats() {
+                try {
+                    var raw = localStorage.getItem(LS_KEY_STATS);
+                    if (!raw) return { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
+                    var s = JSON.parse(raw) || {};
+                    return {
+                        attempts: clampInt((s.attempts != null) ? s.attempts : 0, 0, 1000000000),
+                        correct: clampInt((s.correct != null) ? s.correct : 0, 0, 1000000000),
+                        streak: clampInt((s.streak != null) ? s.streak : 0, 0, 1000000000),
+                        bestStreak: clampInt((s.bestStreak != null) ? s.bestStreak : 0, 0, 1000000000)
+                    };
+                } catch (e) {
+                    return { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
+                }
+            }
+
+            function saveStats(stats) { localStorage.setItem(LS_KEY_STATS, JSON.stringify(stats)); }
+
+            /* 품사 하이라이트
+               라이브러리가 없으면 그대로 표시한다
+            */
+            function highlightPOS(sentence) {
+                sentence = String(sentence || "");
+                if (!sentence) return "";
+                if (!window.nlp) return escapeHtml(sentence);
+
+                try {
+                    var doc = window.nlp(sentence);
+                    var terms = doc.terms().json({ offset: true });
+
+                    var firstVerbIndex = -1;
+                    for (var i = 0; i < terms.length; i++) {
+                        if (terms[i].tags && terms[i].tags.Verb) { firstVerbIndex = i; break; }
+                    }
+
+                    var subjectIndex = -1;
+                    if (firstVerbIndex !== -1) {
+                        for (var j = 0; j < firstVerbIndex; j++) {
+                            var tg = terms[j].tags || {};
+                            if (tg.Noun || tg.Pronoun) { subjectIndex = j; break; }
+                        }
+                    }
+
+                    var out = "";
+                    var cursor = 0;
+
+                    for (var k = 0; k < terms.length; k++) {
+                        var t = terms[k];
+                        var off = t.offset || {};
+                        var start = (off.start != null) ? off.start : cursor;
+                        var end = (off.end != null) ? off.end : (start + String(t.text || "").length);
+
+                        out += escapeHtml(sentence.slice(cursor, start));
+
+                        var cls = "";
+                        if (k === subjectIndex) cls = "pos-subj";
+                        else if (t.tags && t.tags.Verb) cls = "pos-verb";
+                        else if (t.tags && t.tags.Adjective) cls = "pos-adj";
+                        else if (t.tags && t.tags.Adverb) cls = "pos-adv";
+
+                        var seg = sentence.slice(start, end);
+                        if (cls) out += "<span class='" + cls + "'>" + escapeHtml(seg) + "</span>";
+                        else out += escapeHtml(seg);
+
+                        cursor = end;
+                    }
+
+                    out += escapeHtml(sentence.slice(cursor));
+                    return out;
+                } catch (e) {
+                    return escapeHtml(sentence);
+                }
+            }
+
+            /* 카테고리 관련 */
+            function findCatById(id) {
+                for (var i = 0; i < categories.length; i++) if (categories[i].id === id) return categories[i];
+                return null;
+            }
+            function getCatById(id) {
+                var c = findCatById(id);
+                if (c) return c;
+                return { id: "none", name: "(없음)", color: "#9ca3af" };
+            }
+
+            function catBadgeHtml(catId) {
+                var c = getCatById(catId);
+                var fg = textColorForBg(c.color);
+                return "<span class='catbadge' style='background:" + escapeHtml(c.color) + "; color:" + fg + ";'>" + escapeHtml(c.name) + "</span>";
+            }
+
+            function updateCatSelectStyle() {
+                var sel = $("catSelect");
+                if (!sel) return;
+
+                var catId = sel.value || "none";
+                var c = getCatById(catId);
+                var fg = textColorForBg(c.color);
+
+                sel.style.background = c.color;
+                sel.style.color = fg;
+                sel.style.borderColor = "var(--line)";
+            }
+
+            /* 파스텔 팔레트 */
             var PASTEL_COLORS = [
                 "#FFD6E7", "#FFEDCC", "#FFF6BF", "#D9F7BE", "#CFFAFE",
                 "#D6E4FF", "#E9D5FF", "#FFE4D6", "#E0F2FE", "#DCFCE7"
             ];
-
-            // ✅ 팔레트는 하나만 사용(추가/수정 공용)
             var selectedPastel = PASTEL_COLORS[0];
 
             function renderPastelPalette() {
@@ -1109,6 +1341,15 @@
                 }
             }
 
+            /* 카테고리 체크박스 목록 */
+            function countItemsByCatId(catId) {
+                var n = 0;
+                for (var i = 0; i < items.length; i++) {
+                    if (String(items[i].catId) === String(catId)) n++;
+                }
+                return n;
+            }
+
             function getCheckedCategoryIds() {
                 var box = $("catListBox");
                 if (!box) return [];
@@ -1124,14 +1365,6 @@
                 var ids = getCheckedCategoryIds();
                 var btn = $("catBulkDeleteBtn2");
                 if (btn) btn.disabled = (ids.length === 0);
-            }
-
-            function countItemsByCatId(catId) {
-                var n = 0;
-                for (var i = 0; i < items.length; i++) {
-                    if (String(items[i].catId) === String(catId)) n++;
-                }
-                return n;
             }
 
             function renderCategoryCheckboxList() {
@@ -1181,197 +1414,23 @@
                 updateCatDeleteButtonState();
             }
 
-            function toast(msg) {
-                var t = $("toast");
-                t.textContent = msg;
-                t.className = "toast show";
-                setTimeout(function () { t.className = "toast"; }, 1200);
-            }
-
-            function loadItems() {
-                try {
-                    var raw = localStorage.getItem(LS_KEY_ITEMS);
-                    if (!raw) return [];
-                    var arr = JSON.parse(raw);
-                    if (!arr || !arr.length) return [];
-                    var out = [];
-                    for (var i = 0; i < arr.length; i++) {
-                        var x = arr[i] || {};
-                        var now = Date.now();
-                        out.push({
-                            id: String((x.id != null) ? x.id : uuid()),
-                            catId: String((x.catId != null) ? x.catId : "none"),
-                            ko: String((x.ko != null) ? x.ko : ""),
-                            en: String((x.en != null) ? x.en : ""),
-                            tags: normalizeTags(x.tags), // 호환용
-                            createdAt: Number((x.createdAt != null) ? x.createdAt : now),
-                            updatedAt: Number((x.updatedAt != null) ? x.updatedAt : now),
-                            wrong: clampInt((x.wrong != null) ? x.wrong : 0, 0, 1000000000),
-                            correct: clampInt((x.correct != null) ? x.correct : 0, 0, 1000000000),
-                            attempts: clampInt((x.attempts != null) ? x.attempts : 0, 0, 1000000000)
-                        });
-                    }
-                    return out;
-                } catch (e) { return []; }
-            }
-
-            function saveItems(items) { localStorage.setItem(LS_KEY_ITEMS, JSON.stringify(items)); }
-
-            function loadStats() {
-                try {
-                    var raw = localStorage.getItem(LS_KEY_STATS);
-                    if (!raw) return { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
-                    var s = JSON.parse(raw) || {};
-                    return {
-                        attempts: clampInt((s.attempts != null) ? s.attempts : 0, 0, 1000000000),
-                        correct: clampInt((s.correct != null) ? s.correct : 0, 0, 1000000000),
-                        streak: clampInt((s.streak != null) ? s.streak : 0, 0, 1000000000),
-                        bestStreak: clampInt((s.bestStreak != null) ? s.bestStreak : 0, 0, 1000000000)
-                    };
-                } catch (e) {
-                    return { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
+            /* 배열 섞기 */
+            function shuffle(arr) {
+                for (var i = arr.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
                 }
             }
 
-            function saveStats(stats) { localStorage.setItem(LS_KEY_STATS, JSON.stringify(stats)); }
-
-            function defaultCategories() {
-                return [
-                    { id: "none", name: "(없음)", color: "#9ca3af" },
-                    { id: "cat-" + uuid(), name: "일상", color: "#2563eb" },
-                    { id: "cat-" + uuid(), name: "여행", color: "#7c3aed" }
-                ];
+            /* 아이템 찾기
+               id로 인덱스를 찾는다
+            */
+            function findItemIndexById(id) {
+                for (var i = 0; i < items.length; i++) if (items[i].id === id) return i;
+                return -1;
             }
 
-            function loadCategories() {
-                try {
-                    var raw = localStorage.getItem(LS_KEY_CATS);
-                    if (!raw) return defaultCategories();
-                    var arr = JSON.parse(raw);
-                    if (!arr || !arr.length) return defaultCategories();
-
-                    var hasNone = false;
-                    for (var i = 0; i < arr.length; i++) if (arr[i] && String(arr[i].id) === "none") { hasNone = true; break; }
-                    if (!hasNone) arr.unshift({ id: "none", name: "(없음)", color: "#9ca3af" });
-
-                    var out = [];
-                    for (var j = 0; j < arr.length; j++) {
-                        var c = arr[j] || {};
-                        var id = String((c.id != null) ? c.id : ("cat-" + uuid()));
-                        var name = trim((c.name != null) ? c.name : "카테고리");
-                        if (!name) name = "카테고리";
-                        var color = normalizeHexColor(c.color) || "#2563eb";
-                        out.push({ id: id, name: name, color: color });
-                    }
-
-                    var finalArr = [];
-                    var noneObj = null;
-                    for (var k = 0; k < out.length; k++) if (out[k].id === "none") { noneObj = out[k]; break; }
-                    if (!noneObj) noneObj = { id: "none", name: "(없음)", color: "#9ca3af" };
-                    finalArr.push(noneObj);
-                    for (var t = 0; t < out.length; t++) if (out[t].id !== "none") finalArr.push(out[t]);
-
-                    return finalArr;
-                } catch (e) {
-                    return defaultCategories();
-                }
-            }
-
-            function saveCategories(cats) { localStorage.setItem(LS_KEY_CATS, JSON.stringify(cats)); }
-
-            function findCatById(id) {
-                for (var i = 0; i < categories.length; i++) if (categories[i].id === id) return categories[i];
-                return null;
-            }
-
-            function getCatById(id) {
-                var c = findCatById(id);
-                if (c) return c;
-                return categories[0] || { id: "none", name: "(없음)", color: "#9ca3af" };
-            }
-
-            function catBadgeHtml(catId) {
-                var c = getCatById(catId);
-                var fg = textColorForBg(c.color);
-                return "<span class='catbadge' style='background:" + escapeHtml(c.color) + "; color:" + fg + ";'>" + escapeHtml(c.name) + "</span>";
-            }
-
-            function updateCatSelectStyle() {
-                var sel = $("catSelect");
-                if (!sel) return;
-
-                var catId = sel.value || "none";
-                var c = getCatById(catId);
-                var fg = textColorForBg(c.color);
-
-                sel.style.background = c.color;
-                sel.style.color = fg;
-                sel.style.borderColor = "var(--line)";
-            }
-
-            function highlightPOS(sentence) {
-                sentence = String(sentence || "");
-                if (!sentence) return "";
-                if (!window.nlp) return escapeHtml(sentence);
-
-                try {
-                    var doc = window.nlp(sentence);
-                    var terms = doc.terms().json({ offset: true });
-
-                    var firstVerbIndex = -1;
-                    for (var i = 0; i < terms.length; i++) {
-                        if (terms[i].tags && terms[i].tags.Verb) { firstVerbIndex = i; break; }
-                    }
-                    var subjectIndex = -1;
-                    if (firstVerbIndex !== -1) {
-                        for (var j = 0; j < firstVerbIndex; j++) {
-                            var tg = terms[j].tags || {};
-                            if (tg.Noun || tg.Pronoun) { subjectIndex = j; break; }
-                        }
-                    }
-
-                    var out = "";
-                    var cursor = 0;
-
-                    for (var k = 0; k < terms.length; k++) {
-                        var t = terms[k];
-                        var off = t.offset || {};
-                        var start = (off.start != null) ? off.start : cursor;
-                        var end = (off.end != null) ? off.end : (start + String(t.text || "").length);
-
-                        out += escapeHtml(sentence.slice(cursor, start));
-
-                        var cls = "";
-                        if (k === subjectIndex) cls = "pos-subj";
-                        else if (t.tags && t.tags.Verb) cls = "pos-verb";
-                        else if (t.tags && t.tags.Adjective) cls = "pos-adj";
-                        else if (t.tags && t.tags.Adverb) cls = "pos-adv";
-
-                        var seg = sentence.slice(start, end);
-                        if (cls) out += "<span class='" + cls + "'>" + escapeHtml(seg) + "</span>";
-                        else out += escapeHtml(seg);
-
-                        cursor = end;
-                    }
-
-                    out += escapeHtml(sentence.slice(cursor));
-                    return out;
-                } catch (e) {
-                    return escapeHtml(sentence);
-                }
-            }
-
-            var items = loadItems();
-            var categories = loadCategories();
-            var selectedId = null;
-
-            var quizPool = [];
-            var quizIndex = 0;
-            var currentItem = null;
-            var quizMode = "random";
-
-            var selectedItemIds = {};
-
+            /* 화면 탭 전환 */
             function setTab(tab) {
                 var btns = document.querySelectorAll(".tabbtn");
                 for (var i = 0; i < btns.length; i++) {
@@ -1384,6 +1443,31 @@
                 if (tab === "quiz") refreshQuizPool(false);
             }
 
+            /* 전역 데이터 */
+            var items = loadItems();
+            var categories = loadCategories();
+
+            /* 관리 화면에서 선택된 문장 id */
+            var selectedId = null;
+
+            /* 퀴즈 세션
+               order는 문항 id 배열
+               index는 현재 위치
+               results는 문항별 결과 저장
+            */
+            var quizSession = {
+                order: [],
+                index: 0,
+                results: {},
+                mode: "random",
+                catFilter: "all",
+                limit: 0
+            };
+
+            /* 다중 선택 */
+            var selectedItemIds = {};
+
+            /* 탭 버튼 연결 */
             var tabButtons = document.querySelectorAll(".tabbtn");
             for (var tb = 0; tb < tabButtons.length; tb++) {
                 tabButtons[tb].addEventListener("click", (function (btn) {
@@ -1391,61 +1475,7 @@
                 })(tabButtons[tb]));
             }
 
-            function renderCategorySelects() {
-                fillCatSelect($("catSelect"));
-                fillCatFilterSelect($("catFilterSelect"));
-                fillCatFilterSelect($("quizCatFilter"));
-
-                var bulkSel = $("bulkChangeCatSelect");
-                if (bulkSel) {
-                    bulkSel.innerHTML = "";
-                    var ph = document.createElement("option");
-                    ph.value = "";
-                    ph.textContent = "카테고리 변경";
-                    bulkSel.appendChild(ph);
-
-                    for (var i = 0; i < categories.length; i++) {
-                        var c = categories[i];
-                        var opt = document.createElement("option");
-                        opt.value = c.id;
-                        opt.textContent = c.name;
-                        bulkSel.appendChild(opt);
-                    }
-                }
-                fillCatEditSelect();
-            }
-
-            // ✅ 수정 셀렉트가 options를 갈아엎어도 선택/입력/팔레트 동기화 유지
-            function fillCatEditSelect() {
-                var sel = $("catEditSelect");
-                if (!sel) return;
-
-                var prev = String(sel.value || "");
-                sel.innerHTML = "";
-
-                for (var i = 0; i < categories.length; i++) {
-                    var c = categories[i];
-                    if (c.id === "none") continue;
-
-                    var opt = document.createElement("option");
-                    opt.value = c.id;
-                    opt.textContent = c.name;
-                    sel.appendChild(opt);
-                }
-
-                if (sel.options.length > 0) {
-                    var exists = false;
-                    for (var j = 0; j < sel.options.length; j++) {
-                        if (sel.options[j].value === prev) { exists = true; break; }
-                    }
-                    sel.value = exists ? prev : sel.options[0].value;
-                    sel.dispatchEvent(new Event("change"));
-                } else {
-                    // 카테고리가 none만 남은 경우
-                    $("catEditNameInput").value = "";
-                }
-            }
-
+            /* 셀렉트 박스 채우기 */
             function fillCatSelect(sel) {
                 if (!sel) return;
                 sel.innerHTML = "";
@@ -1475,6 +1505,60 @@
                 }
             }
 
+            function fillCatEditSelect() {
+                var sel = $("catEditSelect");
+                if (!sel) return;
+
+                var prev = String(sel.value || "");
+                sel.innerHTML = "";
+
+                for (var i = 0; i < categories.length; i++) {
+                    var c = categories[i];
+                    if (c.id === "none") continue;
+
+                    var opt = document.createElement("option");
+                    opt.value = c.id;
+                    opt.textContent = c.name;
+                    sel.appendChild(opt);
+                }
+
+                if (sel.options.length > 0) {
+                    var exists = false;
+                    for (var j = 0; j < sel.options.length; j++) {
+                        if (sel.options[j].value === prev) { exists = true; break; }
+                    }
+                    sel.value = exists ? prev : sel.options[0].value;
+                    sel.dispatchEvent(new Event("change"));
+                } else {
+                    $("catEditNameInput").value = "";
+                }
+            }
+
+            function renderCategorySelects() {
+                fillCatSelect($("catSelect"));
+                fillCatFilterSelect($("catFilterSelect"));
+                fillCatFilterSelect($("quizCatFilter"));
+
+                var bulkSel = $("bulkChangeCatSelect");
+                if (bulkSel) {
+                    bulkSel.innerHTML = "";
+                    var ph = document.createElement("option");
+                    ph.value = "";
+                    ph.textContent = "카테고리 변경";
+                    bulkSel.appendChild(ph);
+
+                    for (var i = 0; i < categories.length; i++) {
+                        var c = categories[i];
+                        var opt = document.createElement("option");
+                        opt.value = c.id;
+                        opt.textContent = c.name;
+                        bulkSel.appendChild(opt);
+                    }
+                }
+                fillCatEditSelect();
+            }
+
+            /* 폼 초기화 */
             function resetForm(keepCategory) {
                 selectedId = null;
 
@@ -1489,102 +1573,14 @@
                 updateCatSelectStyle();
             }
 
-            $("saveBtn").addEventListener("click", function () {
-                var catId = String($("catSelect").value || "none");
-                var ko = trim($("koInput").value);
-                var en = trim($("enInput").value);
+            /* 헤더 갱신 */
+            function updateHeader() {
+                $("headerCount").textContent = "문장 " + items.length + "개";
+                var stats = loadStats();
+                $("headerStreak").textContent = "연속 정답 " + stats.streak;
+            }
 
-                if (!ko || !en) { toast("한국어/영어는 필수입니다."); return; }
-
-                var now = Date.now();
-
-                if (selectedId) {
-                    var idx = -1;
-                    for (var i = 0; i < items.length; i++) { if (items[i].id === selectedId) { idx = i; break; } }
-                    if (idx >= 0) {
-                        items[idx].catId = catId;
-                        items[idx].ko = ko;
-                        items[idx].en = en;
-                        items[idx].tags = []; // ✅ 태그 UI 삭제: 저장 시 비움(기존 데이터는 유지 가능)
-                        items[idx].updatedAt = now;
-                        saveItems(items);
-                        toast("수정 저장 완료");
-                        renderList();
-                        renderWrongList();
-                        updateHeader();
-                        refreshQuizPool(false);
-                        renderCategoryCheckboxList();
-                        return;
-                    }
-                }
-
-                var it = {
-                    id: uuid(),
-                    catId: catId,
-                    ko: ko,
-                    en: en,
-                    tags: [], // ✅
-                    createdAt: now,
-                    updatedAt: now,
-                    wrong: 0,
-                    correct: 0,
-                    attempts: 0
-                };
-                items.unshift(it);
-                saveItems(items);
-                toast("추가 완료");
-                resetForm(true);
-                renderList();
-                renderWrongList();
-                updateHeader();
-                refreshQuizPool(false);
-                renderCategoryCheckboxList();
-            });
-
-            $("resetStatsBtn").addEventListener("click", function () {
-                var ok = confirm("통계를 초기화합니다.\n(시도 수, 정답 수, 연속 정답이 모두 0으로 리셋됩니다)");
-                if (!ok) return;
-
-                saveStats({
-                    attempts: 0,
-                    correct: 0,
-                    streak: 0,
-                    bestStreak: 0
-                });
-
-                toast("통계 초기화 완료");
-                renderStats();
-                updateHeader();
-            });
-
-            $("resetFormBtn").addEventListener("click", function () { resetForm(); });
-
-            $("deleteBtn").addEventListener("click", function () {
-                if (!selectedId) return;
-                var ok = confirm("선택한 항목을 삭제합니다. (되돌릴 수 없음)");
-                if (!ok) return;
-
-                var out = [];
-                for (var i = 0; i < items.length; i++) if (items[i].id !== selectedId) out.push(items[i]);
-                items = out;
-                saveItems(items);
-
-                if (selectedItemIds[selectedId]) delete selectedItemIds[selectedId];
-
-                toast("삭제 완료");
-                resetForm();
-                renderList();
-                renderWrongList();
-                updateHeader();
-                refreshQuizPool(false);
-                updateBulkItemUI();
-                renderCategoryCheckboxList();
-            });
-
-            $("searchInput").addEventListener("input", function () { renderList(); });
-            $("sortSelect").addEventListener("change", function () { renderList(); });
-            $("catFilterSelect").addEventListener("change", function () { renderList(); });
-
+            /* 목록 다중 선택 UI */
             function getSelectedItemIdList() {
                 var out = [];
                 for (var k in selectedItemIds) if (Object.prototype.hasOwnProperty.call(selectedItemIds, k)) out.push(k);
@@ -1609,86 +1605,7 @@
                 }
             }
 
-            $("bulkChangeCatSelect").addEventListener("change", function () { updateBulkItemUI(); });
-
-            $("bulkClearSelectionBtn").addEventListener("click", function () {
-                selectedItemIds = {};
-                var chks = document.querySelectorAll("#listTbody .rowChk");
-                for (var i = 0; i < chks.length; i++) chks[i].checked = false;
-                updateBulkItemUI();
-                toast("선택 해제");
-            });
-
-            $("bulkDeleteItemsBtn").addEventListener("click", function () {
-                var ids = getSelectedItemIdList();
-                if (ids.length === 0) return;
-
-                var ok = confirm("선택한 문장 " + ids.length + "개를 삭제합니다. (되돌릴 수 없음)");
-                if (!ok) return;
-
-                var map = {};
-                for (var i = 0; i < ids.length; i++) map[ids[i]] = true;
-
-                var keep = [];
-                for (var j = 0; j < items.length; j++) {
-                    if (!map[items[j].id]) keep.push(items[j]);
-                }
-                items = keep;
-                saveItems(items);
-
-                if (selectedId && map[selectedId]) resetForm();
-
-                selectedItemIds = {};
-                toast("선택 문장 삭제 완료");
-                renderList();
-                renderWrongList();
-                renderStats();
-                refreshQuizPool(false);
-                updateHeader();
-                updateBulkItemUI();
-                renderCategoryCheckboxList();
-            });
-
-            $("bulkApplyCatBtn").addEventListener("click", function () {
-                var ids = getSelectedItemIdList();
-                var newCatId = trim($("bulkChangeCatSelect").value);
-                if (ids.length === 0 || !newCatId) return;
-
-                var ok = confirm("선택한 문장 " + ids.length + "개의 카테고리를 변경합니다.");
-                if (!ok) return;
-
-                var map = {};
-                for (var i = 0; i < ids.length; i++) map[ids[i]] = true;
-
-                var now = Date.now();
-                for (var j = 0; j < items.length; j++) {
-                    if (map[items[j].id]) {
-                        items[j].catId = newCatId;
-                        items[j].updatedAt = now;
-                    }
-                }
-                saveItems(items);
-
-                toast("카테고리 변경 완료");
-                renderList();
-                renderWrongList();
-                refreshQuizPool(false);
-                updateBulkItemUI();
-                renderCategoryCheckboxList();
-            });
-
-            $("selectAllItems").addEventListener("change", function () {
-                var checked = !!this.checked;
-                var chks = document.querySelectorAll("#listTbody .rowChk");
-                for (var i = 0; i < chks.length; i++) {
-                    var id = chks[i].getAttribute("data-id");
-                    chks[i].checked = checked;
-                    if (checked) selectedItemIds[id] = true;
-                    else delete selectedItemIds[id];
-                }
-                updateBulkItemUI();
-            });
-
+            /* 문장 목록 렌더링 */
             function renderList() {
                 var q = trim($("searchInput").value).toLowerCase();
                 var sort = $("sortSelect").value;
@@ -1706,7 +1623,7 @@
                     var filtered = [];
                     for (var k = 0; k < view.length; k++) {
                         var it = view[k];
-                        var hay = (it.ko + " " + it.en).toLowerCase(); // ✅ 태그 제거
+                        var hay = (it.ko + " " + it.en).toLowerCase();
                         if (hay.indexOf(q) >= 0) filtered.push(it);
                     }
                     view = filtered;
@@ -1730,7 +1647,7 @@
                         tdSel.setAttribute("data-label", "선택");
                         tdSel.innerHTML =
                             '<input type="checkbox" class="rowChk" data-id="' + escapeHtml(it.id) + '"' +
-                            (selectedItemIds[it.id] ? " checked" : "") + '>';
+                            (selectedItemIds[it.id] ? " checked" : "") + ">";
                         tr.appendChild(tdSel);
 
                         var tdCat = document.createElement("td");
@@ -1750,7 +1667,7 @@
 
                         var tdWrong = document.createElement("td");
                         tdWrong.setAttribute("data-label", "오답");
-                        tdWrong.innerHTML = '<span class="badge">' + it.wrong + '</span>';
+                        tdWrong.innerHTML = '<span class="badge">' + it.wrong + "</span>";
                         tr.appendChild(tdWrong);
 
                         tr.addEventListener("click", function (e) {
@@ -1787,591 +1704,7 @@
                 updateBulkItemUI();
             }
 
-            var catAddBtn2 = $("catAddBtn2");
-            if (catAddBtn2) {
-                catAddBtn2.addEventListener("click", function () {
-                    var name = trim($("catNameInput2").value);
-                    if (!name) { toast("카테고리 이름이 필요합니다."); return; }
-
-                    for (var i = 0; i < categories.length; i++) {
-                        if (trim(categories[i].name).toLowerCase() === name.toLowerCase()) {
-                            toast("같은 이름의 카테고리가 이미 있습니다.");
-                            return;
-                        }
-                    }
-
-                    var newCat = { id: "cat-" + uuid(), name: name, color: selectedPastel };
-                    categories.push(newCat);
-                    saveCategories(categories);
-
-                    renderCategorySelects();
-                    renderCategoryCheckboxList();
-
-                    $("catNameInput2").value = "";
-                    toast("카테고리 추가");
-                    renderList();
-                    renderWrongList();
-                    refreshQuizPool(false);
-                });
-            }
-
-            var catBulkDeleteBtn2 = $("catBulkDeleteBtn2");
-            if (catBulkDeleteBtn2) {
-                catBulkDeleteBtn2.addEventListener("click", function () {
-                    var ids = getCheckedCategoryIds();
-                    if (ids.length === 0) return;
-
-                    var real = [];
-                    for (var i = 0; i < ids.length; i++) if (ids[i] !== "none") real.push(ids[i]);
-                    if (real.length === 0) { toast("삭제할 카테고리가 없습니다."); return; }
-
-                    var ok = confirm("선택한 카테고리 " + real.length + "개를 삭제합니다.\n해당 카테고리를 쓰던 문장은 '(없음)'으로 전환됩니다.");
-                    if (!ok) return;
-
-                    var keep = [];
-                    for (var c = 0; c < categories.length; c++) {
-                        var cid = String(categories[c].id);
-                        var del = false;
-                        for (var r = 0; r < real.length; r++) if (real[r] === cid) { del = true; break; }
-                        if (!del) keep.push(categories[c]);
-                    }
-                    categories = keep;
-
-                    for (var j = 0; j < items.length; j++) {
-                        for (var r2 = 0; r2 < real.length; r2++) {
-                            if (String(items[j].catId) === real[r2]) { items[j].catId = "none"; break; }
-                        }
-                    }
-
-                    saveCategories(categories);
-                    saveItems(items);
-
-                    renderCategorySelects();
-                    renderCategoryCheckboxList();
-
-                    if (!findCatById($("catSelect").value)) $("catSelect").value = "none";
-                    updateCatSelectStyle();
-
-                    toast("카테고리 삭제 완료");
-                    renderList();
-                    renderWrongList();
-                    refreshQuizPool(false);
-                });
-            }
-
-            var catEditSelect = $("catEditSelect");
-            if (catEditSelect) {
-                catEditSelect.addEventListener("change", function () {
-                    var cid = String(catEditSelect.value || "");
-                    var cat = findCatById(cid);
-                    if (!cat) return;
-
-                    $("catEditNameInput").value = cat.name;
-
-                    // ✅ 공용 팔레트로 동기화
-                    selectedPastel = cat.color || PASTEL_COLORS[0];
-                    renderPastelPalette();
-                });
-            }
-
-            var catUpdateBtn = $("catUpdateBtn");
-            if (catUpdateBtn) {
-                catUpdateBtn.addEventListener("click", function () {
-                    var sel = $("catEditSelect");
-                    if (!sel || !sel.value) { toast("수정할 카테고리가 없습니다."); return; }
-
-                    var cid = String(sel.value);
-                    if (cid === "none") { toast("(없음)은 수정할 수 없습니다."); return; } // 실제로 none은 셀렉트에 안 들어옴
-
-                    var newName = trim($("catEditNameInput").value);
-                    if (!newName) { toast("카테고리 이름이 필요합니다."); return; }
-
-                    for (var i = 0; i < categories.length; i++) {
-                        var c = categories[i];
-                        if (c.id === cid) continue;
-                        if (trim(c.name).toLowerCase() === newName.toLowerCase()) {
-                            toast("같은 이름의 카테고리가 이미 있습니다.");
-                            return;
-                        }
-                    }
-
-                    var cat = findCatById(cid);
-                    if (!cat) { toast("카테고리를 찾지 못했습니다."); return; }
-
-                    cat.name = newName;
-                    cat.color = selectedPastel; // ✅ 공용 팔레트 값 사용
-
-                    saveCategories(categories);
-
-                    renderCategorySelects();
-                    renderCategoryCheckboxList();
-                    renderList();
-                    renderWrongList();
-                    refreshQuizPool(false);
-                    updateCatSelectStyle();
-
-                    // ✅ 선택 유지 + 입력/팔레트 동기화
-                    $("catEditSelect").value = cid;
-                    $("catEditSelect").dispatchEvent(new Event("change"));
-
-                    toast("카테고리 수정 완료");
-                });
-            }
-
-            $("exportBtn").addEventListener("click", function () {
-                var payload = {
-                    version: 2,
-                    exportedAt: Date.now(),
-                    categories: categories,
-                    items: items,
-                    stats: loadStats()
-                };
-                var json = JSON.stringify(payload, null, 2);
-
-                try {
-                    var blob = new Blob([json], { type: "application/json" });
-                    var url = URL.createObjectURL(blob);
-                    var a = document.createElement("a");
-                    a.href = url;
-                    a.download = "english_sentence_memorizer_backup.json";
-                    document.body.appendChild(a);
-                    a.click();
-                    a.parentNode.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    toast("다운로드 완료");
-                } catch (e) {
-                    var w = window.open();
-                    if (w && w.document) {
-                        w.document.write("<pre>" + escapeHtml(json) + "</pre>");
-                        toast("새 창에 JSON 표시(복사해서 저장)");
-                    } else {
-                        toast("다운로드 실패(팝업 차단)");
-                    }
-                }
-            });
-
-            $("importBtn").addEventListener("click", function () { $("importFile").click(); });
-
-            $("importFile").addEventListener("change", function (e) {
-                var file = (e.target.files && e.target.files[0]) ? e.target.files[0] : null;
-                if (!file) return;
-
-                var ok = confirm("불러오기를 하면 현재 데이터가 모두 사라지고, 불러온 데이터로 덮어씁니다. 계속할까요?");
-                if (!ok) { $("importFile").value = ""; return; }
-
-                var reader = new FileReader();
-                reader.onload = function () {
-                    try {
-                        var data = JSON.parse(String(reader.result || "{}"));
-                        if (!data || !data.items || !data.categories) {
-                            toast("불러오기 실패(형식 오류)");
-                            return;
-                        }
-
-                        var incomingCats = [];
-                        var hasNone = false;
-                        for (var j = 0; j < data.categories.length; j++) {
-                            var c = data.categories[j] || {};
-                            var id = String((c.id != null) ? c.id : ("cat-" + uuid()));
-                            var name = trim((c.name != null) ? c.name : "카테고리");
-                            if (!name) name = "카테고리";
-                            var color = normalizeHexColor(c.color) || "#2563eb";
-                            if (id === "none") hasNone = true;
-                            incomingCats.push({ id: id, name: name, color: color });
-                        }
-                        if (!hasNone) incomingCats.unshift({ id: "none", name: "(없음)", color: "#9ca3af" });
-
-                        incomingCats = (function (arr) {
-                            var noneObj = null;
-                            var rest = [];
-                            for (var k = 0; k < arr.length; k++) {
-                                if (String(arr[k].id) === "none") noneObj = arr[k];
-                                else rest.push(arr[k]);
-                            }
-                            if (!noneObj) noneObj = { id: "none", name: "(없음)", color: "#9ca3af" };
-                            return [noneObj].concat(rest);
-                        })(incomingCats);
-
-                        var catIdMap = {};
-                        for (var cc = 0; cc < incomingCats.length; cc++) catIdMap[incomingCats[cc].id] = true;
-
-                        var incomingItems = [];
-                        for (var jj = 0; jj < data.items.length; jj++) {
-                            var x = data.items[jj] || {};
-                            var now = Date.now();
-                            var it = {
-                                id: String((x.id != null) ? x.id : uuid()),
-                                catId: String((x.catId != null) ? x.catId : "none"),
-                                ko: trim((x.ko != null) ? x.ko : ""),
-                                en: trim((x.en != null) ? x.en : ""),
-                                tags: normalizeTags(x.tags), // 호환용
-                                createdAt: Number((x.createdAt != null) ? x.createdAt : now),
-                                updatedAt: Number((x.updatedAt != null) ? x.updatedAt : now),
-                                wrong: clampInt((x.wrong != null) ? x.wrong : 0, 0, 1000000000),
-                                correct: clampInt((x.correct != null) ? x.correct : 0, 0, 1000000000),
-                                attempts: clampInt((x.attempts != null) ? x.attempts : 0, 0, 1000000000)
-                            };
-                            if (!catIdMap[it.catId]) it.catId = "none";
-                            incomingItems.push(it);
-                        }
-
-                        var incomingStats = { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
-                        if (data.stats) {
-                            incomingStats = {
-                                attempts: clampInt((data.stats.attempts != null) ? data.stats.attempts : 0, 0, 1000000000),
-                                correct: clampInt((data.stats.correct != null) ? data.stats.correct : 0, 0, 1000000000),
-                                streak: clampInt((data.stats.streak != null) ? data.stats.streak : 0, 0, 1000000000),
-                                bestStreak: clampInt((data.stats.bestStreak != null) ? data.stats.bestStreak : 0, 0, 1000000000)
-                            };
-                        }
-
-                        categories = incomingCats;
-                        items = incomingItems;
-                        saveCategories(categories);
-                        saveItems(items);
-                        saveStats(incomingStats);
-
-                        selectedId = null;
-                        selectedItemIds = {};
-                        quizPool = [];
-                        quizIndex = 0;
-                        currentItem = null;
-
-                        toast("불러오기 완료(덮어쓰기)");
-                        renderCategorySelects();
-
-                        resetForm();
-                        renderList();
-                        renderWrongList();
-                        renderStats();
-                        refreshQuizPool(true);
-                        clearQuizUI();
-                        updateHeader();
-                        updateCatSelectStyle();
-                        updateBulkItemUI();
-                        renderPastelPalette();
-                        renderCategoryCheckboxList();
-                        fillCatEditSelect();
-
-                    } catch (err) {
-                        toast("불러오기 실패");
-                    } finally {
-                        $("importFile").value = "";
-                    }
-                };
-                reader.onerror = function () { toast("불러오기 실패"); $("importFile").value = ""; };
-                reader.readAsText(file);
-            });
-
-            $("wipeBtn").addEventListener("click", function () {
-                var ok = confirm("전체 초기화합니다. (문장/통계/카테고리 모두 삭제)");
-                if (!ok) return;
-                localStorage.removeItem(LS_KEY_ITEMS);
-                localStorage.removeItem(LS_KEY_STATS);
-                localStorage.removeItem(LS_KEY_CATS);
-
-                categories = defaultCategories();
-                saveCategories(categories);
-
-                items = [];
-                selectedItemIds = {};
-                resetForm();
-                toast("초기화 완료");
-                renderCategorySelects();
-                renderList();
-                renderWrongList();
-                renderStats();
-                refreshQuizPool(true);
-                updateHeader();
-                updateBulkItemUI();
-                renderCategoryCheckboxList();
-            });
-
-            $("modeSelect").addEventListener("change", function () { refreshQuizPool(true); });
-            $("quizCatFilter").addEventListener("change", function () { refreshQuizPool(true); });
-
-            $("startQuizBtn").addEventListener("click", function () {
-                if (!quizPool.length) refreshQuizPool(true);
-                if (!currentItem) { nextQuestion(); return; }
-                nextQuestion();
-            });
-
-            $("shuffleBtn").addEventListener("click", function () {
-                refreshQuizPool(true);
-                shuffle(quizPool);
-                toast("재시작");
-            });
-
-            $("submitBtn").addEventListener("click", function () { grade(); });
-
-            $("skipBtn").addEventListener("click", function () { nextQuestion(); });
-
-            $("revealBtn").addEventListener("click", function () { revealAnswer(); });
-
-            $("copyAnswerBtn").addEventListener("click", function () {
-                if (!currentItem) return;
-                var text = currentItem.en;
-                try {
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        navigator.clipboard.writeText(text).then(function () { toast("정답 복사 완료"); }, function () { toast("복사 실패"); });
-                    } else {
-                        fallbackCopy(text);
-                    }
-                } catch (e) { fallbackCopy(text); }
-            });
-
-            function fallbackCopy(text) {
-                try {
-                    var ta = document.createElement("textarea");
-                    ta.value = text;
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand("copy");
-                    document.body.removeChild(ta);
-                    toast("정답 복사 완료");
-                } catch (e) { toast("복사 실패"); }
-            }
-
-            $("answerInput").addEventListener("keydown", function (e) {
-                if (e.ctrlKey && e.keyCode === 13) {
-                    e.preventDefault();
-                    if (!$("submitBtn").disabled) grade();
-                }
-            });
-
-            function refreshQuizPool(resetProgress) {
-                quizMode = $("modeSelect").value;
-                var catFilter = String($("quizCatFilter").value || "all");
-
-                var pool = [];
-                for (var i = 0; i < items.length; i++) {
-                    var it = items[i];
-                    if (quizMode === "wrongbook" && !(it.wrong > 0)) continue;
-                    if (catFilter !== "all" && String(it.catId) !== catFilter) continue;
-                    pool.push(it);
-                }
-
-                quizPool = pool;
-                if (quizMode === "random") shuffle(quizPool);
-                if (quizMode === "wrongbook") quizPool.sort(function (a, b) { return b.wrong - a.wrong; });
-
-                if (resetProgress) {
-                    for (var x = 0; x < items.length; x++) delete items[x]._lastResult;
-                    quizIndex = 0;
-                    currentItem = null;
-                    clearQuizUI();
-                }
-
-                $("poolCount").textContent = String(quizPool.length);
-                updateQuizProgress();
-            }
-
-            function updateQuizProgress() {
-                var total = quizPool.length;
-                var cur = currentItem ? Math.max(quizIndex, 1) : 0;
-                $("quizProgress").textContent = String(cur) + " / " + String(total);
-            }
-
-            function clearQuizUI() {
-                $("koPrompt").textContent = "-";
-                $("answerInput").value = "";
-                $("submitBtn").disabled = true;
-                $("skipBtn").disabled = (quizPool.length === 0);
-                $("revealBtn").disabled = true;
-                $("copyAnswerBtn").disabled = true;
-                $("resultArea").style.display = "none";
-                updateQuizProgress();
-            }
-
-            function nextQuestion() {
-                if (quizPool.length === 0) { toast("문항이 없습니다."); clearQuizUI(); return; }
-
-                if (quizIndex >= quizPool.length) {
-                    showFinalOverlay();
-                    return;
-                }
-
-                currentItem = quizPool[quizIndex];
-                quizIndex++;
-
-                $("koPrompt").textContent = currentItem.ko;
-                $("answerInput").value = "";
-                $("submitBtn").disabled = false;
-                $("skipBtn").disabled = false;
-                $("revealBtn").disabled = false;
-                $("copyAnswerBtn").disabled = true;
-
-                $("resultArea").style.display = "none";
-                updateQuizProgress();
-            }
-
-            function revealAnswer() {
-                if (!currentItem) return;
-                $("resultArea").style.display = "";
-                $("resultBadge").textContent = "정답 공개(채점 아님)";
-                $("scoreText").textContent = "";
-                $("answerArea").textContent = currentItem.en;
-
-                var c = getCatById(currentItem.catId);
-                $("itemMeta").textContent =
-                    "카테고리: " + c.name + " · updated: " + fmtDate(currentItem.updatedAt);
-
-                $("copyAnswerBtn").disabled = false;
-            }
-
-            function normalizeEn(s) {
-                var x = String(s || "").toLowerCase();
-
-                x = x.replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
-
-                x = x.replace(/\b(i)\s*'\s*m\b/g, "$1 am");
-                x = x.replace(/\b(can)\s*'\s*t\b/g, "$1not");
-                x = x.replace(/\b(do)\s*'\s*n't\b/g, "$1 not");
-                x = x.replace(/\b(will)\s*'\s*n't\b/g, "$1 not");
-
-                x = x.replace(/\b(it|that|there|here|he|she|who|what|where)\s*'\s*s\b/g, "$1 is");
-                x = x.replace(/\bcan not\b/g, "cannot");
-
-                x = x.replace(/[^a-z0-9\s]/g, " ");
-                x = x.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
-                return x;
-            }
-
-            function tokenizeForDiff(s) {
-                var x = normalizeEn(s);
-                if (!x) return [];
-                return x.split(" ");
-            }
-
-            function lcsMatrix(a, b) {
-                var n = a.length, m = b.length;
-                var dp = [];
-                for (var i = 0; i <= n; i++) {
-                    dp[i] = [];
-                    for (var j = 0; j <= m; j++) dp[i][j] = 0;
-                }
-                for (var ii = 1; ii <= n; ii++) {
-                    for (var jj = 1; jj <= m; jj++) {
-                        dp[ii][jj] = (a[ii - 1] === b[jj - 1]) ? (dp[ii - 1][jj - 1] + 1) : Math.max(dp[ii - 1][jj], dp[ii][jj - 1]);
-                    }
-                }
-                return dp;
-            }
-
-            function lcsMatchedInputIndexes(a, b) {
-                var dp = lcsMatrix(a, b);
-                var i = a.length, j = b.length;
-                var matched = {};
-                while (i > 0 && j > 0) {
-                    if (a[i - 1] === b[j - 1]) {
-                        matched[i - 1] = true;
-                        i--; j--;
-                    } else {
-                        if (dp[i - 1][j] >= dp[i][j - 1]) i--;
-                        else j--;
-                    }
-                }
-                return matched;
-            }
-
-            function buildMarkedInputHtml(input, expected) {
-                var a = tokenizeForDiff(input);
-                var b = tokenizeForDiff(expected);
-
-                if (a.length === 0) return '<div class="muted">입력이 비어있습니다.</div>';
-
-                var matched = lcsMatchedInputIndexes(a, b);
-                var parts = [];
-                for (var i = 0; i < a.length; i++) {
-                    var w = a[i];
-                    var cls = matched[i] ? "good" : "bad";
-                    parts.push('<span class="' + cls + '">' + escapeHtml(w) + '</span>');
-                }
-                return '<div class="mono" style="white-space:normal; line-height:1.9;">' + parts.join(" ") + '</div>';
-            }
-
-            function grade() {
-                if (!currentItem) return;
-
-                var input = trim($("answerInput").value);
-                if (!input) { toast("입력이 비어있습니다."); return; }
-
-                var expected = currentItem.en;
-
-                var normInput = normalizeEn(input);
-                var normExpected = normalizeEn(expected);
-
-                var isCorrect = (normInput === normExpected);
-
-                var stats = loadStats();
-                stats.attempts += 1;
-                currentItem.attempts += 1;
-
-                if (isCorrect) {
-                    stats.correct += 1;
-                    stats.streak += 1;
-                    if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
-                    currentItem.correct += 1;
-                } else {
-                    stats.streak = 0;
-                    currentItem.wrong += 1;
-                }
-
-                saveStats(stats);
-
-                var idx = -1;
-                for (var i = 0; i < items.length; i++) {
-                    if (items[i].id === currentItem.id) { idx = i; break; }
-                }
-                if (idx >= 0) items[idx] = currentItem;
-                saveItems(items);
-
-                $("resultArea").style.display = "";
-
-                var emoji = isCorrect ? "⭕" : "❌";
-                $("resultBadge").textContent = (isCorrect ? (emoji + " 정답") : (emoji + " 오답"));
-                $("resultBadge").style.background = isCorrect ? "#16a34a20" : "#ef444420";
-                $("resultBadge").style.borderColor = isCorrect ? "#22c55e55" : "#ef444455";
-
-                $("myAnswerArea").innerHTML = buildMarkedInputHtml(input, expected);
-                $("answerArea").textContent = expected;
-
-                var c = getCatById(currentItem.catId);
-                $("itemMeta").textContent =
-                    "카테고리: " + c.name + " · updated: " + fmtDate(currentItem.updatedAt);
-
-                $("copyAnswerBtn").disabled = false;
-
-                renderList();
-                renderWrongList();
-                renderStats();
-                updateHeader();
-                renderCategoryCheckboxList();
-
-                toast(isCorrect ? "정답" : "오답");
-
-                currentItem._lastResult = isCorrect;
-            }
-
-            function shuffle(arr) {
-                for (var i = arr.length - 1; i > 0; i--) {
-                    var j = Math.floor(Math.random() * (i + 1));
-                    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
-                }
-            }
-
-            $("clearWrongBtn").addEventListener("click", function () {
-                var ok = confirm("오답 카운트를 전체 초기화합니다. (문장은 유지)");
-                if (!ok) return;
-                for (var i = 0; i < items.length; i++) items[i].wrong = 0;
-                saveItems(items);
-                toast("오답 초기화 완료");
-                renderWrongList();
-                renderList();
-                refreshQuizPool(false);
-                renderCategoryCheckboxList();
-            });
-
+            /* 오답노트 렌더링 */
             function renderWrongList() {
                 var view = [];
                 for (var i = 0; i < items.length; i++) if (items[i].wrong > 0) view.push(items[i]);
@@ -2421,6 +1754,7 @@
                 }
             }
 
+            /* 통계 렌더링 */
             function renderStats() {
                 var stats = loadStats();
                 $("statTotal").textContent = String(items.length);
@@ -2434,38 +1768,395 @@
                 updateHeader();
             }
 
+            /* 퀴즈 진행 표시 */
+            function updateQuizProgress() {
+                var total = quizSession.order.length;
+                var cur = (quizSession.order.length > 0) ? Math.min(quizSession.index, total) : 0;
+                $("quizProgress").textContent = String(cur) + " / " + String(total);
+            }
+
+            /* 퀴즈 화면 초기화 */
+            function clearQuizUI() {
+                $("koPrompt").textContent = "-";
+                $("answerInput").value = "";
+                $("submitBtn").disabled = true;
+                $("skipBtn").disabled = (quizSession.order.length === 0);
+                $("revealBtn").disabled = true;
+                $("copyAnswerBtn").disabled = true;
+                $("resultArea").style.display = "none";
+                updateQuizProgress();
+            }
+
+            /* 퀴즈 문항 구성
+               order에는 id만 저장한다
+               resetProgress가 true면 퀴즈 결과를 지우고 처음부터 다시 시작한다
+            */
+            function refreshQuizPool(resetProgress) {
+                quizSession.mode = $("modeSelect").value;
+                quizSession.catFilter = String($("quizCatFilter").value || "all");
+
+                var poolIds = [];
+                for (var i = 0; i < items.length; i++) {
+                    var it = items[i];
+                    if (quizSession.mode === "wrongbook" && !(it.wrong > 0)) continue;
+                    if (quizSession.catFilter !== "all" && String(it.catId) !== quizSession.catFilter) continue;
+                    poolIds.push(it.id);
+                }
+
+                if (quizSession.mode === "random") {
+                    shuffle(poolIds);
+                } else if (quizSession.mode === "wrongbook") {
+                    poolIds.sort(function (aId, bId) {
+                        var ai = findItemIndexById(aId);
+                        var bi = findItemIndexById(bId);
+                        var aw = (ai >= 0) ? items[ai].wrong : 0;
+                        var bw = (bi >= 0) ? items[bi].wrong : 0;
+                        return bw - aw;
+                    });
+                } else {
+                    /* sequential은 items 순서 유지 */
+                }
+
+                var limitRaw = trim($("quizCountInput").value);
+                var limit = 0;
+                if (limitRaw) limit = clampInt(limitRaw, 0, 1000000000);
+                quizSession.limit = limit;
+
+                if (limit > 0) quizSession.order = poolIds.slice(0, Math.min(limit, poolIds.length));
+                else quizSession.order = poolIds;
+
+                if (resetProgress) {
+                    quizSession.index = 0;
+                    quizSession.results = {};
+                    clearQuizUI();
+                }
+
+                $("poolCount").textContent = String(quizSession.order.length);
+                updateQuizProgress();
+            }
+
+            /* 다음 문제로 이동 */
+            function nextQuestion() {
+                if (quizSession.order.length === 0) {
+                    toast("문항이 없습니다");
+                    clearQuizUI();
+                    return;
+                }
+
+                if (quizSession.index >= quizSession.order.length) {
+                    showFinalOverlay();
+                    return;
+                }
+
+                var id = quizSession.order[quizSession.index];
+                quizSession.index++;
+
+                var idx = findItemIndexById(id);
+                if (idx < 0) {
+                    /* 데이터가 중간에 꼬였을 때를 대비 */
+                    toast("문항을 찾지 못했습니다");
+                    nextQuestion();
+                    return;
+                }
+
+                var it = items[idx];
+
+                $("koPrompt").textContent = it.ko;
+                $("answerInput").value = "";
+                $("submitBtn").disabled = false;
+                $("skipBtn").disabled = false;
+                $("revealBtn").disabled = false;
+                $("copyAnswerBtn").disabled = true;
+
+                $("resultArea").style.display = "none";
+                updateQuizProgress();
+            }
+
+            /* 정답 공개
+               정답 공개는 채점으로 처리하지 않는다
+            */
+            function revealAnswer() {
+                if (quizSession.order.length === 0) return;
+                var curIdx = quizSession.index - 1;
+                if (curIdx < 0) return;
+
+                var id = quizSession.order[curIdx];
+                var idx = findItemIndexById(id);
+                if (idx < 0) return;
+
+                var it = items[idx];
+
+                $("resultArea").style.display = "";
+                $("resultBadge").textContent = "정답 공개 채점 아님";
+                $("scoreText").textContent = "";
+                $("answerArea").textContent = it.en;
+
+                $("myAnswerArea").innerHTML = '<div class="muted">채점이 아니라서 내 답 표시가 없습니다</div>';
+
+                var c = getCatById(it.catId);
+                $("itemMeta").textContent = "카테고리: " + c.name + " · updated: " + fmtDate(it.updatedAt);
+
+                $("copyAnswerBtn").disabled = false;
+            }
+
+            /* 영어 비교를 위한 정규화
+               축약형 처리를 포함한다
+            */
+            function normalizeEn(s) {
+                var x = String(s || "").toLowerCase();
+
+                x = x.replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
+
+                x = x.replace(/\b(i)\s*'\s*m\b/g, "$1 am");
+                x = x.replace(/\b(can)\s*'\s*t\b/g, "$1not");
+                x = x.replace(/\b(do)\s*'\s*n't\b/g, "$1 not");
+                x = x.replace(/\b(will)\s*'\s*n't\b/g, "$1 not");
+
+                x = x.replace(/\b(it|that|there|here|he|she|who|what|where)\s*'\s*s\b/g, "$1 is");
+                x = x.replace(/\bcan not\b/g, "cannot");
+
+                x = x.replace(/[^a-z0-9\s]/g, " ");
+                x = x.replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+                return x;
+            }
+
+            /* diff 표시를 위한 토큰화 */
+            function tokenizeForDiff(s) {
+                var x = normalizeEn(s);
+                if (!x) return [];
+                return x.split(" ");
+            }
+
+            /* LCS 테이블 */
+            function lcsMatrix(a, b) {
+                var n = a.length, m = b.length;
+                var dp = [];
+                for (var i = 0; i <= n; i++) {
+                    dp[i] = [];
+                    for (var j = 0; j <= m; j++) dp[i][j] = 0;
+                }
+                for (var ii = 1; ii <= n; ii++) {
+                    for (var jj = 1; jj <= m; jj++) {
+                        dp[ii][jj] = (a[ii - 1] === b[jj - 1]) ? (dp[ii - 1][jj - 1] + 1) : Math.max(dp[ii - 1][jj], dp[ii][jj - 1]);
+                    }
+                }
+                return dp;
+            }
+
+            function lcsMatchedInputIndexes(a, b) {
+                var dp = lcsMatrix(a, b);
+                var i = a.length, j = b.length;
+                var matched = {};
+                while (i > 0 && j > 0) {
+                    if (a[i - 1] === b[j - 1]) {
+                        matched[i - 1] = true;
+                        i--; j--;
+                    } else {
+                        if (dp[i - 1][j] >= dp[i][j - 1]) i--;
+                        else j--;
+                    }
+                }
+                return matched;
+            }
+
+            // LCS를 한 번만 돌려서 입력 a에서 맞은 인덱스, 정답 b에서 맞은 인덱스를 같이 만든다
+            function lcsMatchedBothIndexes(a, b) {
+                var dp = lcsMatrix(a, b);
+                var i = a.length, j = b.length;
+
+                var matchedA = {};
+                var matchedB = {};
+
+                while (i > 0 && j > 0) {
+                    if (a[i - 1] === b[j - 1]) {
+                        matchedA[i - 1] = true;
+                        matchedB[j - 1] = true;
+                        i--; j--;
+                    } else {
+                        if (dp[i - 1][j] >= dp[i][j - 1]) i--;
+                        else j--;
+                    }
+                }
+
+                return { matchedA: matchedA, matchedB: matchedB };
+            }
+
+            // 정답 문장에서 내 답에 없는 단어는 miss(빨강)로 표시한다
+            function buildMarkedExpectedHtml(input, expected) {
+                var a = tokenizeForDiff(input);
+                var b = tokenizeForDiff(expected);
+
+                if (b.length === 0) return "";
+
+                var both = lcsMatchedBothIndexes(a, b);
+                var matchedB = both.matchedB || {};
+
+                var parts = [];
+                for (var i = 0; i < b.length; i++) {
+                    var w = b[i];
+                    var cls = matchedB[i] ? "good" : "miss";
+                    parts.push('<span class="' + cls + '">' + escapeHtml(w) + "</span>");
+                }
+
+                return '<div class="mono" style="white-space:normal; line-height:1.9;">' + parts.join(" ") + "</div>";
+            }
+
+            /* 내 답의 단어 단위 표시
+               정규화된 단어 기준으로 표시한다
+            */
+            function buildMarkedInputHtml(input, expected) {
+                var a = tokenizeForDiff(input);
+                var b = tokenizeForDiff(expected);
+
+                if (a.length === 0) return '<div class="muted">입력이 비어있습니다</div>';
+
+                var matched = lcsMatchedInputIndexes(a, b);
+                var parts = [];
+                for (var i = 0; i < a.length; i++) {
+                    var w = a[i];
+                    var cls = matched[i] ? "good" : "bad";
+                    parts.push('<span class="' + cls + '">' + escapeHtml(w) + "</span>");
+                }
+                return '<div class="mono" style="white-space:normal; line-height:1.9;">' + parts.join(" ") + "</div>";
+            }
+
+            /* 채점 처리
+               퀴즈 결과는 quizSession.results에 저장한다
+               전역 통계와 문장별 통계는 기존과 같은 방식으로 누적한다
+            */
+            function grade() {
+                if (quizSession.order.length === 0) return;
+
+                var curIdx = quizSession.index - 1;
+                if (curIdx < 0) return;
+
+                var id = quizSession.order[curIdx];
+                var itemIndex = findItemIndexById(id);
+                if (itemIndex < 0) return;
+
+                var input = trim($("answerInput").value);
+                if (!input) { toast("입력이 비어있습니다"); return; }
+
+                var it = items[itemIndex];
+                var expected = it.en;
+
+                var normInput = normalizeEn(input);
+                var normExpected = normalizeEn(expected);
+
+                var isCorrect = (normInput === normExpected);
+
+                /* 전역 통계 업데이트 */
+                var stats = loadStats();
+                stats.attempts += 1;
+                it.attempts += 1;
+
+                if (isCorrect) {
+                    stats.correct += 1;
+                    stats.streak += 1;
+                    if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
+                    it.correct += 1;
+                } else {
+                    stats.streak = 0;
+                    it.wrong += 1;
+                }
+
+                saveStats(stats);
+
+                /* 문장 저장
+                   객체를 교체하지 않고 필드만 변경했으므로 그대로 저장한다
+                */
+                saveItems(items);
+
+                /* 퀴즈 세션 결과 저장 */
+                quizSession.results[id] = {
+                    correct: isCorrect,
+                    input: input
+                };
+
+                /* 결과 UI 표시 */
+                $("resultArea").style.display = "";
+
+                $("resultBadge").textContent = isCorrect ? "정답" : "오답";
+                $("resultBadge").style.background = isCorrect ? "#16a34a20" : "#ef444420";
+                $("resultBadge").style.borderColor = isCorrect ? "#22c55e55" : "#ef444455";
+
+                $("myAnswerArea").innerHTML = buildMarkedInputHtml(input, expected);
+                // $("answerArea").textContent = expected;
+                $("answerArea").innerHTML = buildMarkedExpectedHtml(input, expected);
+
+                var c = getCatById(it.catId);
+                $("itemMeta").textContent = "카테고리: " + c.name + " · updated: " + fmtDate(it.updatedAt);
+
+                $("copyAnswerBtn").disabled = false;
+
+                renderList();
+                renderWrongList();
+                renderStats();
+                updateHeader();
+                renderCategoryCheckboxList();
+
+                toast(isCorrect ? "정답" : "오답");
+            }
+
+            /* 최종 결과 오버레이 */
+            function gradeLetter(score) {
+                if (score >= 90) return "A";
+                if (score >= 80) return "B";
+                if (score >= 70) return "C";
+                if (score >= 60) return "D";
+                if (score >= 50) return "E";
+                return "F";
+            }
+
             function showFinalOverlay() {
-                var total = quizPool.length;
+                var total = quizSession.order.length;
                 var correct = 0;
                 var wrongItems = [];
 
-                for (var i = 0; i < quizPool.length; i++) {
-                    var it = quizPool[i];
-                    if (it._lastResult === true) correct++;
-                    else if (it._lastResult === false) wrongItems.push(it);
+                for (var i = 0; i < quizSession.order.length; i++) {
+                    var id = quizSession.order[i];
+                    var r = quizSession.results[id];
+
+                    if (r && r.correct === true) correct++;
+                    else if (r && r.correct === false) {
+                        var idx = findItemIndexById(id);
+                        if (idx >= 0) wrongItems.push({ item: items[idx], input: r.input });
+                    } else {
+                        /* 채점하지 않은 문항은 스킵으로 취급한다 */
+                    }
                 }
 
+                var wrong = wrongItems.length;
                 var percent = total ? Math.round((correct / total) * 100) : 0;
                 var score = percent;
+                var wrongPercent = total ? Math.round((wrong / total) * 100) : 0;
 
                 $("finalScore").textContent = String(score);
                 $("finalPercent").textContent = String(percent) + "%";
                 $("finalCorrect").textContent = String(correct);
                 $("finalTotal").textContent = String(total);
-                $("overlaySub").textContent = "모드: " + quizMode + " · " + (new Date().toLocaleString());
+
+                $("finalWrong").textContent = String(wrong);
+                $("finalWrongPercent").textContent = String(wrongPercent) + "%";
+                $("finalGrade").textContent = gradeLetter(score);
+
+                $("overlaySub").textContent = "모드: " + quizSession.mode + " · " + (new Date().toLocaleString());
 
                 var list = $("wrongList");
                 list.innerHTML = "";
                 if (!wrongItems.length) {
-                    list.innerHTML = '<div class="muted">틀린 문장이 없습니다.</div>';
+                    list.innerHTML = '<div class="muted">틀린 문장이 없습니다</div>';
                 } else {
                     for (var k = 0; k < wrongItems.length; k++) {
-                        var it2 = wrongItems[k];
+                        var it2 = wrongItems[k].item;
+                        var inp = wrongItems[k].input;
+
                         var div = document.createElement("div");
                         div.className = "wrongItem";
                         div.innerHTML =
-                            '<div class="ko">' + escapeHtml(it2.ko) + '</div>' +
-                            '<div class="row"><div class="label">정답</div><div class="val ans mono">' + escapeHtml(it2.en) + '</div></div>';
+                            '<div class="ko">' + escapeHtml(it2.ko) + "</div>" +
+                            '<div class="row"><div class="label">내 답</div><div class="val user mono">' + escapeHtml(inp || "") + "</div></div>" +
+                            '<div class="row"><div class="label">정답</div><div class="val ans mono">' + escapeHtml(it2.en) + "</div></div>";
                         list.appendChild(div);
                     }
                 }
@@ -2473,6 +2164,560 @@
                 $("quizResultOverlay").style.display = "flex";
             }
 
+            /* 카테고리 수정 선택 */
+            var catEditSelect = $("catEditSelect");
+            if (catEditSelect) {
+                catEditSelect.addEventListener("change", function () {
+                    var cid = String(catEditSelect.value || "");
+                    var cat = findCatById(cid);
+                    if (!cat) return;
+
+                    $("catEditNameInput").value = cat.name;
+
+                    selectedPastel = cat.color || PASTEL_COLORS[0];
+                    renderPastelPalette();
+                });
+            }
+
+            /* 이벤트 연결
+               관리 화면
+            */
+            $("saveBtn").addEventListener("click", function () {
+                var catId = String($("catSelect").value || "none");
+                var ko = trim($("koInput").value);
+                var en = trim($("enInput").value);
+
+                if (!ko || !en) { toast("한국어 영어는 필수입니다"); return; }
+
+                var now = Date.now();
+
+                if (selectedId) {
+                    var idx = findItemIndexById(selectedId);
+                    if (idx >= 0) {
+                        items[idx].catId = catId;
+                        items[idx].ko = ko;
+                        items[idx].en = en;
+                        items[idx].tags = [];
+                        items[idx].updatedAt = now;
+                        saveItems(items);
+                        toast("수정 저장 완료");
+                        renderList();
+                        renderWrongList();
+                        updateHeader();
+                        refreshQuizPool(false);
+                        renderCategoryCheckboxList();
+                        return;
+                    }
+                }
+
+                var it = {
+                    id: uuid(),
+                    catId: catId,
+                    ko: ko,
+                    en: en,
+                    tags: [],
+                    createdAt: now,
+                    updatedAt: now,
+                    wrong: 0,
+                    correct: 0,
+                    attempts: 0
+                };
+                items.unshift(it);
+                saveItems(items);
+                toast("추가 완료");
+                resetForm(true);
+                renderList();
+                renderWrongList();
+                updateHeader();
+                refreshQuizPool(false);
+                renderCategoryCheckboxList();
+            });
+
+            $("resetFormBtn").addEventListener("click", function () { resetForm(); });
+
+            $("deleteBtn").addEventListener("click", function () {
+                if (!selectedId) return;
+                var ok = confirm("선택한 항목을 삭제합니다 되돌릴 수 없음");
+                if (!ok) return;
+
+                var out = [];
+                for (var i = 0; i < items.length; i++) if (items[i].id !== selectedId) out.push(items[i]);
+                items = out;
+                saveItems(items);
+
+                if (selectedItemIds[selectedId]) delete selectedItemIds[selectedId];
+
+                toast("삭제 완료");
+                resetForm();
+                renderList();
+                renderWrongList();
+                updateHeader();
+                refreshQuizPool(false);
+                updateBulkItemUI();
+                renderCategoryCheckboxList();
+            });
+
+            $("searchInput").addEventListener("input", function () { renderList(); });
+            $("sortSelect").addEventListener("change", function () { renderList(); });
+            $("catFilterSelect").addEventListener("change", function () { renderList(); });
+
+            $("bulkChangeCatSelect").addEventListener("change", function () { updateBulkItemUI(); });
+
+            $("bulkClearSelectionBtn").addEventListener("click", function () {
+                selectedItemIds = {};
+                var chks = document.querySelectorAll("#listTbody .rowChk");
+                for (var i = 0; i < chks.length; i++) chks[i].checked = false;
+                updateBulkItemUI();
+                toast("선택 해제");
+            });
+
+            $("bulkDeleteItemsBtn").addEventListener("click", function () {
+                var ids = getSelectedItemIdList();
+                if (ids.length === 0) return;
+
+                var ok = confirm("선택한 문장 " + ids.length + "개를 삭제합니다 되돌릴 수 없음");
+                if (!ok) return;
+
+                var map = {};
+                for (var i = 0; i < ids.length; i++) map[ids[i]] = true;
+
+                var keep = [];
+                for (var j = 0; j < items.length; j++) {
+                    if (!map[items[j].id]) keep.push(items[j]);
+                }
+                items = keep;
+                saveItems(items);
+
+                if (selectedId && map[selectedId]) resetForm();
+
+                selectedItemIds = {};
+                toast("선택 문장 삭제 완료");
+                renderList();
+                renderWrongList();
+                renderStats();
+                refreshQuizPool(false);
+                updateHeader();
+                updateBulkItemUI();
+                renderCategoryCheckboxList();
+            });
+
+            $("bulkApplyCatBtn").addEventListener("click", function () {
+                var ids = getSelectedItemIdList();
+                var newCatId = trim($("bulkChangeCatSelect").value);
+                if (ids.length === 0 || !newCatId) return;
+
+                var ok = confirm("선택한 문장 " + ids.length + "개의 카테고리를 변경합니다");
+                if (!ok) return;
+
+                var map = {};
+                for (var i = 0; i < ids.length; i++) map[ids[i]] = true;
+
+                var now = Date.now();
+                for (var j = 0; j < items.length; j++) {
+                    if (map[items[j].id]) {
+                        items[j].catId = newCatId;
+                        items[j].updatedAt = now;
+                    }
+                }
+                saveItems(items);
+
+                toast("카테고리 변경 완료");
+                renderList();
+                renderWrongList();
+                refreshQuizPool(false);
+                updateBulkItemUI();
+                renderCategoryCheckboxList();
+            });
+
+            $("selectAllItems").addEventListener("change", function () {
+                var checked = !!this.checked;
+                var chks = document.querySelectorAll("#listTbody .rowChk");
+                for (var i = 0; i < chks.length; i++) {
+                    var id = chks[i].getAttribute("data-id");
+                    chks[i].checked = checked;
+                    if (checked) selectedItemIds[id] = true;
+                    else delete selectedItemIds[id];
+                }
+                updateBulkItemUI();
+            });
+
+            /* 카테고리 추가 */
+            $("catAddBtn2").addEventListener("click", function () {
+                var name = trim($("catNameInput2").value);
+                if (!name) { toast("카테고리 이름이 필요합니다"); return; }
+
+                for (var i = 0; i < categories.length; i++) {
+                    if (trim(categories[i].name).toLowerCase() === name.toLowerCase()) {
+                        toast("같은 이름의 카테고리가 이미 있습니다");
+                        return;
+                    }
+                }
+
+                var newCat = { id: "cat-" + uuid(), name: name, color: selectedPastel };
+                categories.push(newCat);
+                saveCategories(categories);
+
+                renderCategorySelects();
+                renderCategoryCheckboxList();
+
+                $("catNameInput2").value = "";
+                toast("카테고리 추가");
+                renderList();
+                renderWrongList();
+                refreshQuizPool(false);
+            });
+
+            /* 카테고리 선택 삭제 */
+            $("catBulkDeleteBtn2").addEventListener("click", function () {
+                var ids = getCheckedCategoryIds();
+                if (ids.length === 0) return;
+
+                var real = [];
+                for (var i = 0; i < ids.length; i++) if (ids[i] !== "none") real.push(ids[i]);
+                if (real.length === 0) { toast("삭제할 카테고리가 없습니다"); return; }
+
+                var ok = confirm("선택한 카테고리 " + real.length + "개를 삭제합니다 해당 문장은 없음으로 전환됩니다");
+                if (!ok) return;
+
+                var keep = [];
+                for (var c = 0; c < categories.length; c++) {
+                    var cid = String(categories[c].id);
+                    var del = false;
+                    for (var r = 0; r < real.length; r++) if (real[r] === cid) { del = true; break; }
+                    if (!del) keep.push(categories[c]);
+                }
+                categories = keep;
+
+                for (var j = 0; j < items.length; j++) {
+                    for (var r2 = 0; r2 < real.length; r2++) {
+                        if (String(items[j].catId) === real[r2]) { items[j].catId = "none"; break; }
+                    }
+                }
+
+                saveCategories(categories);
+                saveItems(items);
+
+                renderCategorySelects();
+                renderCategoryCheckboxList();
+
+                if (!findCatById($("catSelect").value)) $("catSelect").value = "none";
+                updateCatSelectStyle();
+
+                toast("카테고리 삭제 완료");
+                renderList();
+                renderWrongList();
+                refreshQuizPool(false);
+            });
+
+            /* 카테고리 수정 적용 */
+            $("catUpdateBtn").addEventListener("click", function () {
+                var sel = $("catEditSelect");
+                if (!sel || !sel.value) { toast("수정할 카테고리가 없습니다"); return; }
+
+                var cid = String(sel.value);
+                if (cid === "none") { toast("없음은 수정할 수 없습니다"); return; }
+
+                var newName = trim($("catEditNameInput").value);
+                if (!newName) { toast("카테고리 이름이 필요합니다"); return; }
+
+                for (var i = 0; i < categories.length; i++) {
+                    var c = categories[i];
+                    if (c.id === cid) continue;
+                    if (trim(c.name).toLowerCase() === newName.toLowerCase()) {
+                        toast("같은 이름의 카테고리가 이미 있습니다");
+                        return;
+                    }
+                }
+
+                var cat = findCatById(cid);
+                if (!cat) { toast("카테고리를 찾지 못했습니다"); return; }
+
+                cat.name = newName;
+                cat.color = selectedPastel;
+
+                saveCategories(categories);
+
+                renderCategorySelects();
+                renderCategoryCheckboxList();
+                renderList();
+                renderWrongList();
+                refreshQuizPool(false);
+                updateCatSelectStyle();
+
+                $("catEditSelect").value = cid;
+                $("catEditSelect").dispatchEvent(new Event("change"));
+
+                toast("카테고리 수정 완료");
+            });
+
+            /* 데이터 내보내기 */
+            $("exportBtn").addEventListener("click", function () {
+                var payload = {
+                    version: 2,
+                    exportedAt: Date.now(),
+                    categories: categories,
+                    items: items,
+                    stats: loadStats()
+                };
+                var json = JSON.stringify(payload, null, 2);
+
+                try {
+                    var blob = new Blob([json], { type: "application/json" });
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement("a");
+                    a.href = url;
+                    a.download = "english_sentence_memorizer_backup.json";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.parentNode.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    toast("다운로드 완료");
+                } catch (e) {
+                    var w = window.open();
+                    if (w && w.document) {
+                        w.document.write("<pre>" + escapeHtml(json) + "</pre>");
+                        toast("새 창에 JSON 표시");
+                    } else {
+                        toast("다운로드 실패");
+                    }
+                }
+            });
+
+            /* 데이터 불러오기 */
+            $("importBtn").addEventListener("click", function () { $("importFile").click(); });
+
+            $("importFile").addEventListener("change", function (e) {
+                var file = (e.target.files && e.target.files[0]) ? e.target.files[0] : null;
+                if (!file) return;
+
+                var ok = confirm("불러오기를 하면 현재 데이터가 모두 사라지고 불러온 데이터로 덮어씁니다 계속할까요");
+                if (!ok) { $("importFile").value = ""; return; }
+
+                var reader = new FileReader();
+                reader.onload = function () {
+                    try {
+                        var data = JSON.parse(String(reader.result || "{}"));
+                        if (!data || !data.items || !data.categories) {
+                            toast("불러오기 실패 형식 오류");
+                            return;
+                        }
+
+                        var incomingCats = [];
+                        var hasNone = false;
+                        for (var j = 0; j < data.categories.length; j++) {
+                            var c = data.categories[j] || {};
+                            var id = String((c.id != null) ? c.id : ("cat-" + uuid()));
+                            var name = trim((c.name != null) ? c.name : "카테고리");
+                            if (!name) name = "카테고리";
+                            var color = normalizeHexColor(c.color) || "#2563eb";
+                            if (id === "none") hasNone = true;
+                            incomingCats.push({ id: id, name: name, color: color });
+                        }
+                        if (!hasNone) incomingCats.unshift({ id: "none", name: "(없음)", color: "#9ca3af" });
+
+                        incomingCats = (function (arr) {
+                            var noneObj = null;
+                            var rest = [];
+                            for (var k = 0; k < arr.length; k++) {
+                                if (String(arr[k].id) === "none") noneObj = arr[k];
+                                else rest.push(arr[k]);
+                            }
+                            if (!noneObj) noneObj = { id: "none", name: "(없음)", color: "#9ca3af" };
+                            return [noneObj].concat(rest);
+                        })(incomingCats);
+
+                        var catIdMap = {};
+                        for (var cc = 0; cc < incomingCats.length; cc++) catIdMap[incomingCats[cc].id] = true;
+
+                        var incomingItems = [];
+                        for (var jj = 0; jj < data.items.length; jj++) {
+                            var x = data.items[jj] || {};
+                            var now = Date.now();
+                            var it = {
+                                id: String((x.id != null) ? x.id : uuid()),
+                                catId: String((x.catId != null) ? x.catId : "none"),
+                                ko: trim((x.ko != null) ? x.ko : ""),
+                                en: trim((x.en != null) ? x.en : ""),
+                                tags: normalizeTags(x.tags),
+                                createdAt: Number((x.createdAt != null) ? x.createdAt : now),
+                                updatedAt: Number((x.updatedAt != null) ? x.updatedAt : now),
+                                wrong: clampInt((x.wrong != null) ? x.wrong : 0, 0, 1000000000),
+                                correct: clampInt((x.correct != null) ? x.correct : 0, 0, 1000000000),
+                                attempts: clampInt((x.attempts != null) ? x.attempts : 0, 0, 1000000000)
+                            };
+                            if (!catIdMap[it.catId]) it.catId = "none";
+                            incomingItems.push(it);
+                        }
+
+                        var incomingStats = { attempts: 0, correct: 0, streak: 0, bestStreak: 0 };
+                        if (data.stats) {
+                            incomingStats = {
+                                attempts: clampInt((data.stats.attempts != null) ? data.stats.attempts : 0, 0, 1000000000),
+                                correct: clampInt((data.stats.correct != null) ? data.stats.correct : 0, 0, 1000000000),
+                                streak: clampInt((data.stats.streak != null) ? data.stats.streak : 0, 0, 1000000000),
+                                bestStreak: clampInt((data.stats.bestStreak != null) ? data.stats.bestStreak : 0, 0, 1000000000)
+                            };
+                        }
+
+                        categories = incomingCats;
+                        items = incomingItems;
+                        saveCategories(categories);
+                        saveItems(items);
+                        saveStats(incomingStats);
+
+                        selectedId = null;
+                        selectedItemIds = {};
+
+                        quizSession.order = [];
+                        quizSession.index = 0;
+                        quizSession.results = {};
+
+                        toast("불러오기 완료");
+                        renderCategorySelects();
+
+                        resetForm();
+                        renderList();
+                        renderWrongList();
+                        renderStats();
+                        refreshQuizPool(true);
+                        clearQuizUI();
+                        updateHeader();
+                        updateCatSelectStyle();
+                        updateBulkItemUI();
+                        renderPastelPalette();
+                        renderCategoryCheckboxList();
+                        fillCatEditSelect();
+
+                    } catch (err) {
+                        toast("불러오기 실패");
+                    } finally {
+                        $("importFile").value = "";
+                    }
+                };
+                reader.onerror = function () { toast("불러오기 실패"); $("importFile").value = ""; };
+                reader.readAsText(file);
+            });
+
+            /* 전체 초기화 */
+            $("wipeBtn").addEventListener("click", function () {
+                var ok = confirm("전체 초기화합니다 문장 통계 카테고리 모두 삭제");
+                if (!ok) return;
+                localStorage.removeItem(LS_KEY_ITEMS);
+                localStorage.removeItem(LS_KEY_STATS);
+                localStorage.removeItem(LS_KEY_CATS);
+
+                categories = defaultCategories();
+                saveCategories(categories);
+
+                items = [];
+                selectedItemIds = {};
+                resetForm();
+                toast("초기화 완료");
+                renderCategorySelects();
+                renderList();
+                renderWrongList();
+                renderStats();
+                refreshQuizPool(true);
+                updateHeader();
+                updateBulkItemUI();
+                renderCategoryCheckboxList();
+            });
+
+            /* 통계 초기화 */
+            $("resetStatsBtn").addEventListener("click", function () {
+                var ok = confirm("통계를 초기화합니다 시도 수 정답 수 연속 정답이 모두 0으로 리셋됩니다");
+                if (!ok) return;
+
+                saveStats({
+                    attempts: 0,
+                    correct: 0,
+                    streak: 0,
+                    bestStreak: 0
+                });
+
+                toast("통계 초기화 완료");
+                renderStats();
+                updateHeader();
+            });
+
+            /* 오답 카운트 전체 초기화 */
+            $("clearWrongBtn").addEventListener("click", function () {
+                var ok = confirm("오답 카운트를 전체 초기화합니다 문장은 유지");
+                if (!ok) return;
+                for (var i = 0; i < items.length; i++) items[i].wrong = 0;
+                saveItems(items);
+                toast("오답 초기화 완료");
+                renderWrongList();
+                renderList();
+                refreshQuizPool(false);
+                renderCategoryCheckboxList();
+            });
+
+            /* 퀴즈 설정 변경 */
+            $("modeSelect").addEventListener("change", function () { refreshQuizPool(true); });
+            $("quizCatFilter").addEventListener("change", function () { refreshQuizPool(true); });
+            $("quizCountInput").addEventListener("input", function () { refreshQuizPool(true); });
+
+            /* 퀴즈 버튼 */
+            $("startQuizBtn").addEventListener("click", function () {
+                if (!quizSession.order.length) refreshQuizPool(true);
+                nextQuestion();
+            });
+
+            $("shuffleBtn").addEventListener("click", function () {
+                refreshQuizPool(true);
+                if (quizSession.mode === "random") shuffle(quizSession.order);
+                toast("재시작");
+            });
+
+            $("submitBtn").addEventListener("click", function () { grade(); });
+
+            $("skipBtn").addEventListener("click", function () { nextQuestion(); });
+
+            $("revealBtn").addEventListener("click", function () { revealAnswer(); });
+
+            /* 정답 복사 */
+            $("copyAnswerBtn").addEventListener("click", function () {
+                if (quizSession.order.length === 0) return;
+                var curIdx = quizSession.index - 1;
+                if (curIdx < 0) return;
+
+                var id = quizSession.order[curIdx];
+                var idx = findItemIndexById(id);
+                if (idx < 0) return;
+
+                var text = items[idx].en;
+
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(text).then(function () { toast("정답 복사 완료"); }, function () { toast("복사 실패"); });
+                    } else {
+                        fallbackCopy(text);
+                    }
+                } catch (e) { fallbackCopy(text); }
+            });
+
+            function fallbackCopy(text) {
+                try {
+                    var ta = document.createElement("textarea");
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(ta);
+                    toast("정답 복사 완료");
+                } catch (e) { toast("복사 실패"); }
+            }
+
+            /* 입력창 단축키 */
+            $("answerInput").addEventListener("keydown", function (e) {
+                if (e.ctrlKey && e.keyCode === 13) {
+                    e.preventDefault();
+                    if (!$("submitBtn").disabled) grade();
+                }
+            });
+
+            /* 결과 오버레이 닫기 */
             $("exitResultBtn").addEventListener("click", function () {
                 $("quizResultOverlay").style.display = "none";
                 setTab("quiz");
@@ -2480,12 +2725,7 @@
                 clearQuizUI();
             });
 
-            function updateHeader() {
-                $("headerCount").textContent = "문장 " + items.length + "개";
-                var stats = loadStats();
-                $("headerStreak").textContent = "연속 정답 " + stats.streak;
-            }
-
+            /* 초기화 */
             function init() {
                 function applyTheme(theme) {
                     theme = theme || "dark";
@@ -2509,6 +2749,7 @@
                     });
                 }
 
+                /* 데이터 보정 저장 */
                 saveCategories(categories);
 
                 renderCategorySelects();
